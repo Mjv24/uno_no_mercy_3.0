@@ -1,0 +1,1940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ffd23f">
+<title>UNO No Mercy — fan-made multiplayer card game</title>
+<meta name="description" content="Play UNO Show 'Em No Mercy rules with friends: private rooms, invite links, voice chat, pass-and-play and AI. No sign-up, no server.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1d1340;--mut:#6b5f8f;--pink:#ff3d8b;--yellow:#ffd23f;--cyan:#21d4fd;--lime:#7ae582;--orange:#ff8c42;--purple:#8b5cf6;
+  --R:#ee1c25;--Y:#ffd400;--G:#1fa64a;--B:#0a6fd6;--W:#151515;
+  --cw:78px;--pile:96px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{background:#fff4d6;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{color:var(--ink);font-family:'Nunito',system-ui,sans-serif;min-height:100vh;overflow-x:hidden;
+  background:radial-gradient(circle at 8% 12%,#ffc2dd 0 120px,transparent 121px),radial-gradient(circle at 94% 6%,#b8f2ff 0 150px,transparent 151px),
+  radial-gradient(circle at 90% 88%,#fff08a 0 140px,transparent 141px),radial-gradient(circle at 4% 92%,#c9f7cf 0 110px,transparent 111px),
+  radial-gradient(#ffd9a8 1.5px,transparent 1.5px) 0 0/22px 22px,#fff4d6;background-attachment:fixed}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--purple);outline-offset:3px}
+#app{max-width:1100px;margin:0 auto;padding:16px 14px 110px;position:relative}
+.narrow{max-width:560px;margin:0 auto}
+.fd{font-family:'Fredoka',sans-serif}
+h2.fd{font-size:28px;margin:6px 0 14px}
+
+/* ---------- logo ---------- */
+.logo{text-align:center;font-family:'Fredoka',sans-serif;font-weight:700;line-height:.95;margin:22px 0 6px}
+.logo .l1{font-size:clamp(52px,17vw,96px);display:block}
+.logo .l1 span{display:inline-block;-webkit-text-stroke:3px var(--ink);paint-order:stroke fill;text-shadow:5px 5px 0 var(--ink);animation:hop 1.8s ease-in-out infinite}
+.logo .l1 span:nth-child(1){color:var(--R)}.logo .l1 span:nth-child(2){color:var(--Y);animation-delay:.12s}.logo .l1 span:nth-child(3){color:var(--G);animation-delay:.24s}
+.logo .l2{display:inline-block;margin-top:6px;font-size:clamp(24px,7vw,40px);color:#fff;background:var(--ink);padding:4px 18px;border-radius:14px;transform:rotate(-3deg);box-shadow:4px 4px 0 var(--pink)}
+@keyframes hop{0%,60%,100%{transform:translateY(0) rotate(0)}30%{transform:translateY(-10px) rotate(-6deg)}}
+.tagline{text-align:center;font-weight:900;letter-spacing:.14em;text-transform:uppercase;font-size:12px;color:var(--mut);margin:16px 0 22px}
+.fan{display:flex;justify-content:center;margin:8px 0 4px;height:130px}
+.fan .card{--cw:70px;margin:0 -16px;transform-origin:50% 120%;animation:fanIn .8s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes fanIn{from{transform:translateY(60px) rotate(0) scale(.6);opacity:0}}
+.madein{text-align:center;margin:22px auto 0;width:max-content;max-width:100%;font-family:'Fredoka',sans-serif;font-weight:700;font-size:16px;background:#fff;border:3px solid var(--ink);border-radius:999px;padding:6px 16px;box-shadow:3px 3px 0 var(--pink);transform:rotate(-1.5deg)}
+
+/* ---------- panels & buttons ---------- */
+.card-ui{background:#fff;border:3px solid var(--ink);border-radius:22px;padding:16px;margin-bottom:16px;box-shadow:6px 6px 0 var(--ink)}
+.card-ui.p{box-shadow:6px 6px 0 var(--pink),6px 6px 0 3px var(--ink)}
+.card-ui.c{box-shadow:6px 6px 0 var(--cyan),6px 6px 0 3px var(--ink)}
+.card-ui.y{box-shadow:6px 6px 0 var(--yellow),6px 6px 0 3px var(--ink)}
+.label{font-size:12px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+input,select{width:100%;background:#fffaf0;border:3px solid var(--ink);color:var(--ink);border-radius:14px;padding:12px 14px;font:inherit;font-size:16px;font-weight:700;outline:none}
+input:focus,select:focus{box-shadow:4px 4px 0 var(--cyan)}
+input[type=range]{padding:0;height:8px;accent-color:var(--pink);border-width:2px}
+input[type=checkbox]{width:22px;height:22px;accent-color:var(--pink)}
+.btn{display:block;width:100%;padding:14px;border-radius:16px;border:3px solid var(--ink);background:var(--yellow);font-family:'Fredoka',sans-serif;font-weight:700;font-size:18px;cursor:pointer;box-shadow:5px 5px 0 var(--ink);transition:transform .12s cubic-bezier(.34,1.56,.64,1),box-shadow .12s;text-align:center;touch-action:manipulation}
+.btn:not(:disabled):hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 var(--ink)}
+.btn:not(:disabled):active{transform:translate(4px,4px);box-shadow:1px 1px 0 var(--ink)}
+.btn.w{background:#fff}.btn.p{background:var(--pink);color:#fff;text-shadow:2px 2px 0 var(--ink)}.btn.c{background:var(--cyan)}.btn.g{background:var(--lime)}.btn.o{background:var(--orange)}.btn.v{background:var(--purple);color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.sm{display:inline-block;width:auto;padding:7px 12px;font-size:14px;border-width:2.5px;box-shadow:3px 3px 0 var(--ink);border-radius:12px}
+.btn.xs{display:inline-block;width:auto;padding:3px 8px;font-size:12px;border-width:2px;box-shadow:2px 2px 0 var(--ink);border-radius:9px}
+.row{display:flex;gap:10px}.row>*{flex:1}
+.mt{margin-top:12px}.mt2{margin-top:18px}
+.menu-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.menu-grid .btn{padding:18px 10px;font-size:19px}
+.menu-grid .btn .em{display:block;font-size:30px;margin-bottom:4px}
+.err{color:#fff;background:var(--pink);border:3px solid var(--ink);border-radius:14px;padding:10px;text-align:center;margin:12px 0;font-weight:800}
+.note{font-size:13px;color:var(--mut);font-weight:700}
+.hr{font-size:10px;font-weight:900;background:var(--orange);color:#fff;border-radius:6px;padding:1px 6px;margin-left:6px;letter-spacing:.06em;white-space:nowrap}
+.off{font-size:10px;font-weight:900;background:var(--lime);border-radius:6px;padding:1px 6px;margin-left:6px;letter-spacing:.06em}
+.setrow{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:9px 0;border-bottom:2px dashed #e6defa;font-weight:800;flex-wrap:wrap}
+.setrow:last-child{border:none}
+.setrow select{width:auto;min-width:150px;padding:8px 10px;font-size:14px}
+.linkbox{font-size:13px;font-weight:700;word-break:break-all;color:var(--purple);border:3px dashed var(--purple);background:#f3edff;border-radius:14px;padding:10px}
+.plist{list-style:none}
+.plist li{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:2px dashed #e6defa;font-weight:800}
+.plist li:last-child{border:none}
+.plist .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.av{width:38px;height:38px;flex:none;border-radius:50%;border:3px solid var(--ink);display:grid;place-items:center;font-family:'Fredoka',sans-serif;font-size:17px;font-weight:700;color:var(--ink);text-transform:uppercase}
+.tag{font-size:10px;background:#ffe9a8;border-radius:999px;padding:2px 8px;letter-spacing:.06em;text-transform:uppercase;margin-left:6px;font-weight:900;white-space:nowrap}
+.tag.ok{background:var(--lime)}.tag.no{background:#ffd0dc}.tag.bot{background:#d9f6ff}
+.x{background:#fff;border:2.5px solid var(--ink);border-radius:50%;width:30px;height:30px;font-weight:900;cursor:pointer;flex:none}
+.summary{font-size:14px;line-height:1.7;font-weight:700}
+.summary li{margin-left:18px}
+.rules h3{font-family:'Fredoka',sans-serif;font-size:20px;margin:16px 0 6px}
+.rules p,.rules li{font-size:15px;line-height:1.6}
+.rules ul{padding-left:20px}
+.rules table{border-collapse:collapse;width:100%;font-size:14px;margin:6px 0}
+.rules td,.rules th{border:2px solid var(--ink);padding:5px 8px;text-align:left}
+.rules th{background:var(--yellow)}
+
+/* ---------- PLAYING CARDS (original design, real-card proportions) ---------- */
+.card{width:var(--cw);height:calc(var(--cw)*1.5);border-radius:calc(var(--cw)*.13);background:#fff;position:relative;flex:none;border:none;
+  box-shadow:0 2px 0 rgba(0,0,0,.25),0 4px 10px rgba(0,0,0,.28);cursor:default;font-family:'Fredoka',sans-serif;user-select:none;-webkit-user-select:none;display:block;padding:0}
+.card .f{position:absolute;inset:calc(var(--cw)*.065);border-radius:calc(var(--cw)*.09);background:var(--cc);overflow:hidden}
+.card .f::before{content:"";position:absolute;left:50%;top:50%;width:70%;height:112%;border-radius:50%;background:#fff;transform:translate(-50%,-50%) rotate(32deg);box-shadow:0 0 0 calc(var(--cw)*.012) rgba(0,0,0,.08)}
+.card .f::after{content:"";position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.28) 0%,transparent 35%,transparent 70%,rgba(0,0,0,.12) 100%);pointer-events:none}
+.card .mid{position:absolute;inset:0;display:grid;place-items:center;z-index:1;color:var(--cc);font-weight:700;font-size:calc(var(--cw)*.6);line-height:1;
+  -webkit-text-stroke:calc(var(--cw)*.025) #111;paint-order:stroke fill;text-shadow:calc(var(--cw)*.035) calc(var(--cw)*.035) 0 #111}
+.card .mid.sm{font-size:calc(var(--cw)*.4)}
+.card .mid svg{width:66%;height:auto;overflow:visible;filter:drop-shadow(calc(var(--cw)*.03) calc(var(--cw)*.03) 0 #111)}
+.card .cn{position:absolute;z-index:2;color:#fff;font-weight:700;font-size:calc(var(--cw)*.2);line-height:1;-webkit-text-stroke:calc(var(--cw)*.014) #111;paint-order:stroke fill;text-shadow:1px 1px 0 #111;text-align:center}
+.card .cn svg{width:calc(var(--cw)*.2);height:auto;filter:drop-shadow(1px 1px 0 #111)}
+.card .tl{top:5%;left:9%}.card .br{bottom:5%;right:9%;transform:rotate(180deg)}
+.card .pat{position:absolute;z-index:2;bottom:5%;left:9%;font-size:calc(var(--cw)*.13);color:#fff;text-shadow:0 0 2px #111,0 0 2px #111;line-height:1}
+.card u{text-decoration:none;border-bottom:calc(var(--cw)*.04) solid #111}
+.c-R{--cc:var(--R)}.c-Y{--cc:var(--Y)}.c-G{--cc:var(--G)}.c-B{--cc:var(--B)}.c-W{--cc:var(--W)}
+.c-W .f::before{background:conic-gradient(from 32deg,var(--R) 0 25%,var(--B) 0 50%,var(--Y) 0 75%,var(--G) 0);border:calc(var(--cw)*.03) solid #fff}
+.c-W .mid{color:#fff}
+.c-W.k-roul .f::before{background:conic-gradient(from 0deg,var(--R),var(--Y),var(--G),var(--B),var(--R));animation:spin 6s linear infinite}
+.card.back .f{background:#141414}
+.card.back .f::before{background:var(--R);width:74%;height:104%}
+.card.back .mid{color:var(--Y);font-size:calc(var(--cw)*.15);transform:rotate(-24deg);text-align:center;line-height:.95;-webkit-text-stroke:calc(var(--cw)*.018) #111;letter-spacing:.02em}
+.card.mini{--cw:22px;border-radius:4px;box-shadow:0 1px 2px rgba(0,0,0,.4)}
+.card.mini .mid{display:none}
+
+/* hand */
+.hand{display:flex;align-items:flex-end;overflow-x:auto;overflow-y:hidden;padding:30px 20px 14px 34px;min-height:calc(var(--cw)*1.5 + 50px);-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
+.hand::-webkit-scrollbar{height:8px}.hand::-webkit-scrollbar-thumb{background:rgba(0,0,0,.3);border-radius:9px}
+.hand .card{margin-left:calc(var(--cw)*var(--ov,-.32));transition:transform .18s cubic-bezier(.34,1.56,.64,1),filter .2s,margin .2s;touch-action:pan-x}
+.hand .card:first-child{margin-left:0}
+.hand .card.legal{cursor:pointer;transform:translateY(-14px);box-shadow:0 0 0 3px #fff,0 0 0 6px var(--ink),0 10px 18px rgba(0,0,0,.35)}
+@media (hover:hover){.hand .card.legal:hover,.hand .card.legal:focus-visible{transform:translateY(-30px) scale(1.12);z-index:5;margin-right:calc(var(--cw)*.25)}.hand .card.dim:hover{transform:translateY(-6px);z-index:4}}
+.hand .card.dim{filter:brightness(.62) saturate(.6)}
+.hand .card.new{animation:dealIn .5s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes dealIn{from{transform:translate(-120px,-160px) rotate(-30deg) scale(.4);opacity:0}}
+.hand.empty{justify-content:center;align-items:center;color:#fff;font-weight:900;font-size:15px;text-align:center}
+
+/* ---------- table ---------- */
+.topbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.topbar .code{font-family:'Fredoka',sans-serif;font-size:20px;background:var(--lime);border:3px solid var(--ink);border-radius:12px;padding:2px 10px;box-shadow:3px 3px 0 var(--ink);letter-spacing:.1em}
+.topbar .sp{flex:1}
+.board{background:radial-gradient(ellipse at 50% 38%,#3fe08a 0%,#16b862 45%,#0b8d48 100%);border:4px solid var(--ink);border-radius:34px;box-shadow:8px 8px 0 var(--ink),inset 0 0 0 10px rgba(255,255,255,.12),inset 0 0 60px rgba(0,0,0,.25);padding:14px 10px 6px;position:relative;overflow:hidden}
+.board::before{content:"";position:absolute;inset:0;background:radial-gradient(rgba(255,255,255,.07) 1px,transparent 1.5px) 0 0/8px 8px;pointer-events:none}
+.seats{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;position:relative;z-index:2}
+.seat{background:#fff;border:3px solid var(--ink);border-radius:18px;padding:6px 10px 6px 6px;display:flex;align-items:center;gap:8px;min-width:150px;max-width:220px;box-shadow:4px 4px 0 rgba(0,0,0,.35);position:relative;transition:transform .25s cubic-bezier(.34,1.56,.64,1)}
+.seat.cur{background:#fff6c9;transform:translateY(-4px) scale(1.04);box-shadow:0 0 0 4px var(--yellow),4px 6px 0 4px rgba(0,0,0,.35);animation:glowSeat 1.2s ease-in-out infinite alternate}
+@keyframes glowSeat{to{box-shadow:0 0 0 6px var(--pink),4px 6px 0 6px rgba(0,0,0,.35)}}
+.seat.out{opacity:.55;filter:grayscale(1)}
+.seat .info{min-width:0;flex:1}
+.seat .nm{font-weight:900;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.seat .ct{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:900}
+.seat .backs{display:flex}
+.seat .backs .card{margin-left:-14px}.seat .backs .card:first-child{margin-left:0}
+.seat .badge{position:absolute;top:-12px;right:-8px;font-size:11px;font-weight:900;border:2.5px solid var(--ink);border-radius:999px;padding:2px 8px;background:var(--yellow);transform:rotate(6deg)}
+.seat .badge.uno{background:var(--pink);color:#fff;animation:pop .6s cubic-bezier(.34,1.56,.64,1)}
+.seat .badge.dead{background:#222;color:#fff}
+.seat .danger{color:var(--pink)}
+@keyframes pop{from{transform:scale(0) rotate(-30deg)}}
+.center{position:relative;z-index:1;display:flex;justify-content:center;align-items:center;gap:clamp(18px,6vw,60px);padding:26px 0 18px}
+.dirring{position:absolute;left:50%;top:50%;width:min(420px,92%);aspect-ratio:2.3;transform:translate(-50%,-50%);border:4px dashed rgba(255,255,255,.35);border-radius:50%;pointer-events:none}
+.dirring .arr{position:absolute;inset:0;animation:spin 9s linear infinite}
+.dirring.ccw .arr{animation-direction:reverse}
+.dirring .arr::before,.dirring .arr::after{content:"➤";position:absolute;color:rgba(255,255,255,.75);font-size:24px}
+.dirring .arr::before{top:-16px;left:50%}.dirring .arr::after{bottom:-16px;left:45%;transform:rotate(180deg)}
+.dirring.flip{animation:flipDir .7s cubic-bezier(.34,1.56,.64,1)}
+@keyframes flipDir{50%{transform:translate(-50%,-50%) scale(1.15) rotateY(180deg)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.pile{position:relative;display:flex;flex-direction:column;align-items:center;gap:6px}
+.pile .lbl{font-size:12px;font-weight:900;color:#fff;text-shadow:1px 1px 0 var(--ink);background:rgba(0,0,0,.25);border-radius:999px;padding:2px 10px;white-space:nowrap}
+.drawpile{position:relative;background:none;border:none;cursor:default;--cw:var(--pile)}
+.drawpile .card{position:relative}
+.drawpile .card:nth-child(1){position:absolute;top:-6px;left:-6px}.drawpile .card:nth-child(2){position:absolute;top:-3px;left:-3px}
+.drawpile.can{cursor:pointer;animation:nudge 1.1s ease-in-out infinite}
+.drawpile.can .card:last-child{box-shadow:0 0 0 4px #fff,0 0 0 7px var(--pink),0 6px 14px rgba(0,0,0,.4)}
+@keyframes nudge{50%{transform:translateY(-6px) rotate(-2deg)}}
+.discard{position:relative;--cw:calc(var(--pile) + 8px);width:var(--cw);height:calc(var(--cw)*1.5)}
+.discard .card{position:absolute;inset:0}
+.discard .ghost{transform:rotate(-12deg);filter:brightness(.8)}.discard .ghost2{transform:rotate(9deg);filter:brightness(.7)}
+.discard .top.land{animation:land .45s cubic-bezier(.34,1.56,.64,1)}
+@keyframes land{from{transform:translateY(160px) rotate(40deg) scale(1.3);opacity:.2}}
+.discard.drop{outline:4px dashed #fff;outline-offset:8px;border-radius:12px}
+.colorring{position:absolute;inset:-12px;border-radius:20px;border:6px solid var(--cur,#fff);box-shadow:0 0 22px var(--cur,#fff);pointer-events:none;animation:ringPulse 1.6s ease-in-out infinite}
+@keyframes ringPulse{50%{box-shadow:0 0 40px var(--cur,#fff)}}
+.colorchip{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:900;color:#fff;background:rgba(0,0,0,.28);border-radius:999px;padding:2px 10px 2px 4px;white-space:nowrap}
+.colorchip i{width:16px;height:16px;border-radius:50%;border:2px solid #fff;background:var(--cur)}
+.stackbadge{position:absolute;right:-30px;top:-22px;z-index:4;background:var(--pink);color:#fff;font-family:'Fredoka',sans-serif;font-size:26px;font-weight:700;border:3px solid var(--ink);border-radius:16px;padding:2px 10px;box-shadow:3px 3px 0 var(--ink);transform:rotate(10deg);animation:stackPulse .9s ease-in-out infinite alternate}
+@keyframes stackPulse{to{transform:rotate(-6deg) scale(1.15)}}
+.status{position:relative;z-index:2;text-align:center;margin:4px auto 6px;font-weight:900;font-size:15px;color:#fff;text-shadow:1px 1px 0 var(--ink),-1px -1px 0 var(--ink),1px -1px 0 var(--ink),-1px 1px 0 var(--ink);padding:0 6px}
+.status .t{display:inline-block;background:var(--ink);color:var(--yellow);text-shadow:none;border-radius:999px;padding:1px 10px;margin-left:6px;font-size:13px}
+.mercywarn{position:relative;z-index:2;margin:2px auto 6px;max-width:440px;background:#fff;color:var(--ink);border:3px solid var(--ink);border-radius:14px;padding:6px 10px;font-size:13px;font-weight:900;text-align:center;box-shadow:3px 3px 0 var(--pink);animation:wiggle 1.4s ease-in-out infinite}
+.mercywarn.safe{box-shadow:3px 3px 0 var(--yellow);animation:none}
+.me{position:relative;z-index:2;display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center;margin:6px 0 2px}
+.me .who{display:flex;align-items:center;gap:8px;background:#fff;border:3px solid var(--ink);border-radius:16px;padding:4px 12px 4px 4px;font-weight:900}
+.me .who.cur{background:var(--yellow);animation:glowSeat 1.2s ease-in-out infinite alternate}
+.actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.unobtn{background:var(--R);color:#fff;font-size:22px;text-shadow:2px 2px 0 var(--ink);animation:wiggle 1s ease-in-out infinite}
+@keyframes wiggle{25%{transform:rotate(-3deg) scale(1.04)}75%{transform:rotate(3deg) scale(1.04)}}
+.catchbtn{position:absolute;bottom:-14px;left:50%;transform:translateX(-50%);z-index:3;white-space:nowrap;background:var(--pink)!important;color:#fff;animation:wiggle .8s infinite}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
+@media (min-width:980px){.layout.side{grid-template-columns:minmax(0,1fr) 290px}}
+.sidepanel{max-height:70vh;display:flex;flex-direction:column}
+.loglist{flex:1;overflow-y:auto;font-size:13px;font-weight:700;line-height:1.45;max-height:340px}
+.loglist div{padding:3px 0;border-bottom:1px dashed #e6defa}
+
+/* ---------- overlays ---------- */
+.modal-bg{position:fixed;inset:0;background:rgba(29,19,64,.55);z-index:80;display:grid;place-items:center;padding:16px;animation:fade .2s}
+@keyframes fade{from{opacity:0}}
+.modal{background:#fff;border:3px solid var(--ink);border-radius:24px;box-shadow:8px 8px 0 var(--ink);padding:20px;width:min(460px,100%);max-height:90vh;overflow:auto;animation:popin .35s cubic-bezier(.34,1.56,.64,1)}
+.modal h3{font-family:'Fredoka',sans-serif;font-size:24px;margin-bottom:12px;text-align:center}
+@keyframes popin{from{opacity:0;transform:translateY(30px) scale(.85) rotate(-3deg)}}
+.colors{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.colors button{height:90px;border-radius:18px;border:3px solid var(--ink);box-shadow:4px 4px 0 var(--ink);cursor:pointer;font-family:'Fredoka',sans-serif;font-size:20px;font-weight:700;color:#fff;text-shadow:2px 2px 0 var(--ink);transition:transform .15s}
+.colors button:hover{transform:scale(1.05) rotate(-2deg)}
+.colors .R{background:var(--R)}.colors .Y{background:var(--Y)}.colors .G{background:var(--G)}.colors .B{background:var(--B)}
+.modal-bg.peek{background:transparent;place-items:start center;padding:8px;pointer-events:none;animation:none}
+.modal-bg.peek .modal{pointer-events:auto;padding:12px 14px;width:min(520px,100%);box-shadow:6px 6px 0 var(--ink),0 10px 30px rgba(0,0,0,.35);animation:dropin .3s cubic-bezier(.34,1.56,.64,1)}
+.modal-bg.peek .modal h3{font-size:19px;margin-bottom:8px}
+.modal-bg.peek .colors{grid-template-columns:repeat(4,1fr);gap:8px}
+.modal-bg.peek .colors button{height:56px;font-size:15px;border-radius:14px}
+.modal-bg.peek .btn.mt{margin-top:8px;padding:8px;font-size:15px}
+.modal-bg.peek .peeknote{font-size:12px;font-weight:800;color:var(--mut);text-align:center;margin-top:6px}
+@keyframes dropin{from{opacity:0;transform:translateY(-40px)}}
+@media (max-width:640px){.modal-bg.peek .colors button{height:50px;font-size:13px}.modal-bg.peek .modal h3{font-size:17px}}
+.handoff{position:fixed;inset:0;z-index:85;display:grid;place-items:center;background:repeating-linear-gradient(45deg,#ff3d8b 0 40px,#ff5c9e 40px 80px);padding:20px}
+.handoff .box{text-align:center;background:#fff;border:4px solid var(--ink);border-radius:28px;box-shadow:10px 10px 0 var(--ink);padding:28px;max-width:420px;width:100%}
+.handoff .big{font-family:'Fredoka',sans-serif;font-size:40px;line-height:1.05;margin:8px 0 16px;word-break:break-word}
+.banner{position:fixed;left:50%;top:38%;transform:translate(-50%,-50%);z-index:90;pointer-events:none;text-align:center;font-family:'Fredoka',sans-serif;font-weight:700;font-size:clamp(34px,9vw,64px);color:#fff;-webkit-text-stroke:3px var(--ink);paint-order:stroke fill;text-shadow:5px 5px 0 var(--ink);width:max-content;max-width:94vw;animation:bannerIn 1.3s cubic-bezier(.34,1.56,.64,1) forwards}
+.banner small{display:block;font-size:.38em;-webkit-text-stroke:1.5px var(--ink);text-shadow:2px 2px 0 var(--ink);margin-top:4px}
+.banner.elim{font-size:clamp(36px,11vw,80px);color:#ff4d4d}
+@keyframes bannerIn{0%{opacity:0;transform:translate(-50%,-50%) scale(.2) rotate(-20deg)}20%{opacity:1;transform:translate(-50%,-50%) scale(1.1) rotate(3deg)}30%{transform:translate(-50%,-50%) scale(1) rotate(0)}80%{opacity:1}100%{opacity:0;transform:translate(-50%,-70%) scale(.9)}}
+.roulette{position:fixed;inset:0;z-index:88;background:rgba(29,19,64,.6);display:grid;place-items:center;padding:16px;animation:fade .2s}
+.roulette .box{background:#fff;border:4px solid var(--ink);border-radius:26px;box-shadow:8px 8px 0 var(--ink);padding:18px;max-width:640px;width:100%;text-align:center}
+.roulette .flips{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin:12px 0;min-height:90px}
+.roulette .flips .card{--cw:52px;animation:flipIn .3s cubic-bezier(.34,1.56,.64,1) both}
+.roulette .flips .card.hit{box-shadow:0 0 0 4px #fff,0 0 0 8px var(--pink)}
+@keyframes flipIn{from{transform:rotateY(90deg) scale(.6)}}
+.wheel{width:70px;height:70px;margin:0 auto;border-radius:50%;border:4px solid var(--ink);background:conic-gradient(var(--R) 0 25%,var(--Y) 0 50%,var(--G) 0 75%,var(--B) 0);animation:spin .6s linear infinite}
+#toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(140px);background:var(--lime);border:3px solid var(--ink);box-shadow:4px 4px 0 var(--ink);padding:9px 16px;border-radius:14px;font-weight:900;font-size:14px;transition:transform .35s cubic-bezier(.34,1.56,.64,1);z-index:95;max-width:92vw;text-align:center}
+#toast.show{transform:translateX(-50%) translateY(0)}
+#toast.bad{background:#ffd0dc}
+.spark{position:fixed;top:-40px;pointer-events:none;z-index:96;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(112vh) rotate(720deg)}}
+
+/* chat (persistent widget) */
+#chatRoot[hidden],.chat[hidden],.fab[hidden],.vpanel[hidden]{display:none!important}
+.chat{position:fixed;right:12px;bottom:12px;z-index:60;width:min(360px,calc(100vw - 24px));height:min(70vh,520px);background:#fff;border:3px solid var(--ink);border-radius:22px;box-shadow:6px 6px 0 var(--ink);display:flex;flex-direction:column}
+.chathead{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:3px solid var(--ink);background:var(--yellow);border-radius:19px 19px 0 0;font-family:'Fredoka',sans-serif;font-size:17px;font-weight:700}
+.chatlog{flex:1;overflow-y:auto;padding:10px 14px;font-size:14px;line-height:1.45}
+.chatlog .m{margin-bottom:6px;word-break:break-word}
+.chatlog .sys{color:var(--mut);font-style:italic;font-size:12px;font-weight:700}
+.quick{display:flex;flex-wrap:wrap;gap:5px;padding:8px 10px;border-top:2px dashed #e6defa}
+.quick button{border:2px solid var(--ink);background:#fff;border-radius:10px;padding:3px 7px;cursor:pointer;font-size:15px;touch-action:manipulation}
+.chatform{display:flex;gap:6px;padding:10px}
+.chatform input{padding:9px 10px;font-size:16px}
+.mutes{padding:6px 12px;font-size:12px;font-weight:800;border-top:2px dashed #e6defa;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.fab{position:fixed;right:14px;bottom:14px;z-index:55;display:flex;gap:8px}
+.fab .btn{font-size:15px}
+.u{display:inline-block;background:var(--pink);color:#fff;border-radius:999px;padding:0 7px;margin-left:5px;border:2px solid var(--ink);font-size:12px}
+#reactLayer{position:fixed;inset:0;pointer-events:none;z-index:75}
+.freact{position:fixed;transform:translate(-50%,-100%);font-size:38px;line-height:1;text-align:center;animation:fr 2.5s ease-out forwards;filter:drop-shadow(2px 2px 0 rgba(0,0,0,.25))}
+.freact small{display:block;font-size:11px;font-weight:900;background:#fff;border:2px solid var(--ink);border-radius:8px;padding:1px 6px;margin-top:2px;white-space:nowrap}
+.freact.txt{font-size:15px;font-weight:900;background:#fff;border:3px solid var(--ink);border-radius:14px;padding:5px 10px;box-shadow:3px 3px 0 var(--ink);white-space:nowrap}
+@keyframes fr{0%{opacity:0;transform:translate(-50%,-60%) scale(.4)}12%{opacity:1;transform:translate(-50%,-110%) scale(1.25)}22%{transform:translate(-50%,-105%) scale(1)}80%{opacity:1}100%{opacity:0;transform:translate(-50%,-220%)}}
+
+/* voice */
+.vic{font-size:12px;margin-left:3px}
+.vring{display:inline-flex;border-radius:50%;transition:box-shadow .12s}
+.vring.speaking,.who.speaking{box-shadow:0 0 0 3px #fff,0 0 0 6px #22c55e,0 0 16px #22c55e}
+.seat.speaking{box-shadow:0 0 0 4px #22c55e,0 0 22px #22c55e,4px 4px 0 4px rgba(0,0,0,.35)}
+.seat.speaking .av{animation:talk .3s ease-in-out infinite alternate}
+@keyframes talk{to{transform:scale(1.12)}}
+.vgroup{display:inline-flex;gap:6px;align-items:center;flex-wrap:nowrap}
+.vpanel{position:fixed;z-index:70;top:64px;right:12px;width:min(320px,calc(100vw - 24px));background:#fff;border:3px solid var(--ink);border-radius:20px;box-shadow:6px 6px 0 var(--ink);padding:12px}
+.vpanel h4{font-family:'Fredoka',sans-serif;font-size:18px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
+.vpanel .vrow{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:2px dashed #e6defa;font-weight:800;font-size:14px}
+.vpanel .vrow:last-child{border:none}
+.vpanel .vrow .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vpanel .vrow .av{width:30px;height:30px;font-size:13px}
+.vpanel .vrow input[type=range]{width:80px}
+.vpanel .bigmic{display:flex;gap:8px;margin-bottom:10px}
+.vpanel .bigmic .btn{font-size:16px;padding:12px 8px}
+
+.results .big{font-family:'Fredoka',sans-serif;font-size:42px;text-align:center;line-height:1.05}
+.score{font-family:'Fredoka',sans-serif;font-weight:700;background:var(--ink);color:var(--yellow);border-radius:10px;padding:2px 10px;min-width:44px;text-align:center}
+.timer{display:inline-block;font-family:'Fredoka',sans-serif;background:var(--ink);color:#fff;border-radius:10px;padding:1px 8px;margin-left:6px;text-shadow:none}
+.timer.low{background:var(--pink);animation:wiggle .5s infinite}
+.pulse{animation:pls 1.2s infinite}@keyframes pls{50%{opacity:.45}}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+/* ================= MOBILE ================= */
+@media (max-width:640px){
+  :root{--cw:60px;--pile:66px}
+  #app{padding:8px 8px 84px}
+  h2.fd{font-size:24px}
+  .card-ui{padding:12px;border-radius:18px;box-shadow:4px 4px 0 var(--ink)}
+  .card-ui.p{box-shadow:4px 4px 0 var(--pink),4px 4px 0 3px var(--ink)}.card-ui.c{box-shadow:4px 4px 0 var(--cyan),4px 4px 0 3px var(--ink)}.card-ui.y{box-shadow:4px 4px 0 var(--yellow),4px 4px 0 3px var(--ink)}
+  .menu-grid{gap:10px}.menu-grid .btn{font-size:16px;padding:14px 6px}.menu-grid .btn .em{font-size:26px}
+  .fan{height:110px}.fan .card{--cw:58px;margin:0 -14px}
+  .setrow select{min-width:0;width:100%}
+  .topbar{gap:6px;margin-bottom:8px}
+  .topbar .code{font-size:15px;padding:1px 8px;border-width:2.5px}
+  .topbar .note{display:none}
+  .topbar .btn.sm{padding:5px 8px;font-size:13px;box-shadow:2px 2px 0 var(--ink)}
+  .board{border-width:3px;border-radius:22px;padding:8px 5px 4px;box-shadow:4px 4px 0 var(--ink),inset 0 0 0 6px rgba(255,255,255,.12)}
+  .seats{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:6px}
+  .seat{min-width:0;max-width:none;padding:4px 6px 4px 4px;gap:5px;border-width:2.5px;border-radius:13px;box-shadow:2px 2px 0 rgba(0,0,0,.35)}
+  .seat.cur{transform:none;box-shadow:0 0 0 3px var(--yellow)}
+  @keyframes glowSeat{to{box-shadow:0 0 0 3px var(--pink)}}
+  .seat .av{width:26px;height:26px;font-size:12px;border-width:2px}
+  .seat .nm{font-size:12px}.seat .ct{font-size:11px}
+  .seat .backs{display:none}
+  .seat .badge{font-size:9px;padding:1px 5px;top:-9px;right:-4px;border-width:2px}
+  .catchbtn{bottom:-12px;font-size:11px!important;padding:2px 6px!important}
+  .center{gap:34px;padding:16px 0 10px}
+  .dirring{width:90%;aspect-ratio:2.6;border-width:3px}
+  .dirring .arr::before,.dirring .arr::after{font-size:16px}
+  .stackbadge{right:-24px;top:-16px;font-size:18px;padding:1px 7px;border-width:2.5px}
+  .colorring{inset:-8px;border-width:4px;border-radius:14px}
+  .pile .lbl,.colorchip{font-size:11px}
+  .status{font-size:13px;margin:2px auto 4px}
+  .mercywarn{font-size:12px;margin:2px 6px 6px}
+  .me{gap:6px;margin:4px 0 0}
+  .me .who{font-size:13px;padding:2px 10px 2px 2px;border-width:2.5px}
+  .me .who .av{width:24px!important;height:24px!important;font-size:11px}
+  .actions .btn.sm{padding:7px 10px;font-size:14px}
+  .unobtn{font-size:18px!important}
+  .hand{padding:20px 10px 10px 12px;min-height:calc(var(--cw)*1.5 + 34px)}
+  .hand .card.legal{transform:translateY(-10px);box-shadow:0 0 0 2px #fff,0 0 0 5px var(--ink),0 6px 12px rgba(0,0,0,.35)}
+  .banner{font-size:clamp(28px,10vw,44px);-webkit-text-stroke:2px var(--ink);text-shadow:3px 3px 0 var(--ink)}
+  .banner small{-webkit-text-stroke:1px var(--ink)}
+  .results .big{font-size:32px}
+  .colors button{height:72px;font-size:18px}
+  .modal{padding:16px}
+  .chat{right:6px;left:6px;bottom:6px;width:auto;height:min(52vh,420px)}
+  .fab{right:10px;bottom:10px}
+  .vpanel{top:auto;bottom:10px;left:6px;right:6px;width:auto}
+  .handoff .big{font-size:32px}
+}
+@media (max-width:360px){:root{--cw:54px;--pile:58px}.seats{grid-template-columns:repeat(auto-fit,minmax(88px,1fr))}}
+@media (max-height:520px) and (orientation:landscape){:root{--cw:52px;--pile:54px}.center{padding:8px 0}.logo{margin-top:8px}.seats{display:flex}.seat{min-width:120px}.hand{padding-top:16px;min-height:calc(var(--cw)*1.5 + 26px)}}
+body.reduced *,body.reduced *::before,body.reduced *::after{animation-duration:.001s!important;animation-iteration-count:1!important;transition:none!important}
+@media (prefers-reduced-motion:reduce){body:not(.motion) *,body:not(.motion) *::before,body:not(.motion) *::after{animation-duration:.001s!important;animation-iteration-count:1!important;transition:none!important}}
+
+.seat .ct{white-space:nowrap;overflow:hidden}
+@media (max-width:640px){.seat .cw{display:none}}
+
+</style>
+<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+</head>
+<body>
+<main id="app" aria-live="off"></main>
+<div id="overlay"></div>
+<div id="voiceAudio" hidden></div>
+<div id="chatRoot" hidden></div>
+<div id="vpanel" class="vpanel" role="dialog" aria-label="Voice chat" hidden></div>
+<div id="reactLayer" aria-hidden="true"></div>
+<div id="toast" role="status" aria-live="polite"></div>
+<script>
+/* =====================================================================
+   NO MERCY — deterministic rules engine (no DOM, no network)
+   Works in the browser (window.Engine) and in Node (module.exports).
+   Rules: see RULES.md. Every state change goes through Engine.apply().
+   ===================================================================== */
+(function (root) {
+  'use strict';
+
+  const COLORS = ['R', 'Y', 'G', 'B'];
+  const CNAME = { R: 'Red', Y: 'Yellow', G: 'Green', B: 'Blue', W: 'Wild' };
+  const KNAME = {
+    num: '', skip: 'Skip', rev: 'Reverse', d2: 'Draw 2', d4: 'Draw 4', skipAll: 'Skip Everyone',
+    discAll: 'Discard All', wrd4: 'Wild Reverse Draw 4', wd6: 'Wild Draw 6', wd10: 'Wild Draw 10', roul: 'Wild Color Roulette'
+  };
+  const DRAW_VAL = { d2: 2, d4: 4, wrd4: 4, wd6: 6, wd10: 10 };
+  const WILD_KINDS = ['wrd4', 'wd6', 'wd10', 'roul'];
+
+  // Official defaults. Anything else is a labelled HOUSE RULE.
+  const OFFICIAL_RULES = Object.freeze({
+    handSize: 7,
+    mercy: 25,               // eliminated at >= 25 cards (0 = off, house rule)
+    stacking: true,          // draw cards stack with equal-or-higher value
+    drawUntilPlayable: true, // no playable card -> draw until playable, then play it
+    rouletteChooser: 'victim', // next player chooses the colour, then flips
+    targetScore: 0           // 0 = single hand; 1000 = official optional scoring
+  });
+
+  /* ---------------- random ---------------- */
+  function seededRng(seed) { // mulberry32 — deterministic, for tests/replays
+    let a = seed >>> 0;
+    return function () {
+      a |= 0; a = (a + 0x6D2B79F5) | 0;
+      let t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  function secureRng() {
+    const c = (typeof crypto !== 'undefined' && crypto.getRandomValues) ? crypto : null;
+    if (!c) return Math.random;
+    const buf = new Uint32Array(1);
+    return function () { c.getRandomValues(buf); return buf[0] / 4294967296; };
+  }
+  function shuffle(arr, rng) {
+    for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(rng() * (i + 1)); const t = arr[i]; arr[i] = arr[j]; arr[j] = t; }
+    return arr;
+  }
+
+  /* ---------------- deck: 168 cards ---------------- */
+  function buildDeck() {
+    const d = []; let id = 0;
+    const add = (c, k, n) => { const card = { id: id++, c, k }; if (n != null) card.n = n; d.push(card); };
+    for (const c of COLORS) {
+      for (let n = 0; n <= 9; n++) { add(c, 'num', n); add(c, 'num', n); } // 20
+      for (let i = 0; i < 3; i++) add(c, 'skip');      // 3
+      for (let i = 0; i < 3; i++) add(c, 'rev');       // 3
+      for (let i = 0; i < 3; i++) add(c, 'd2');        // 3
+      for (let i = 0; i < 2; i++) add(c, 'd4');        // 2
+      for (let i = 0; i < 2; i++) add(c, 'skipAll');   // 2
+      for (let i = 0; i < 3; i++) add(c, 'discAll');   // 3  -> 36 per colour
+    }
+    for (let i = 0; i < 8; i++) add('W', 'wrd4');
+    for (let i = 0; i < 4; i++) add('W', 'wd6');
+    for (let i = 0; i < 4; i++) add('W', 'wd10');
+    for (let i = 0; i < 8; i++) add('W', 'roul');
+    return d; // 144 + 24 = 168
+  }
+
+  const cardName = c => c.k === 'num' ? `${CNAME[c.c]} ${c.n}` : (c.c === 'W' ? KNAME[c.k] : `${CNAME[c.c]} ${KNAME[c.k]}`);
+  const cardPoints = c => c.k === 'num' ? c.n : (c.c === 'W' ? 50 : 20);
+
+  /* ---------------- helpers ---------------- */
+  const activeIdx = s => s.players.map((p, i) => p.out ? -1 : i).filter(i => i >= 0);
+  function nextFrom(s, i, steps) {
+    const n = s.players.length; let j = i;
+    for (let k = 0; k < (steps || 1); k++) {
+      let g = 0;
+      do { j = (j + s.dir + n) % n; } while (s.players[j].out && ++g <= n);
+    }
+    return j;
+  }
+  function ev(s, e) { e.seq = ++s.eseq; s.events.push(e); if (s.events.length > 40) s.events.shift(); }
+  function log(s, msg) { s.log.push(msg); if (s.log.length > 60) s.log.shift(); }
+  const nm = (s, i) => s.players[i].name;
+  const top = s => s.discard[s.discard.length - 1];
+
+  function ensureDraw(s) {
+    if (s.draw.length) return true;
+    const t = s.discard.pop();
+    const pool = s.discard.concat(s.aside);
+    s.discard = [t]; s.aside = [];
+    if (!pool.length) return false;
+    s.draw = shuffle(pool, s._rng);
+    ev(s, { t: 'reshuffle', n: s.draw.length }); log(s, `Draw pile reshuffled (${s.draw.length} cards)`);
+    return true;
+  }
+  function drawOne(s, p) {
+    if (!ensureDraw(s)) return null;
+    const c = s.draw.pop(); s.players[p].hand.push(c); return c;
+  }
+  function resetUno(pl) { pl.uno = false; pl.pre = false; pl.vuln = false; }
+
+  function eliminate(s, p, why) {
+    const pl = s.players[p];
+    if (pl.out) return;
+    const count = pl.hand.length;
+    pl.out = true; s.aside.push(...pl.hand); pl.hand = []; resetUno(pl);
+    s.knocked++;
+    ev(s, { t: 'elim', p, count, why: why || '' });
+    log(s, `💀 ${nm(s, p)} reached ${count} cards${why ? ' (' + why + ')' : ''} — ELIMINATED by the Mercy Rule (limit ${s.rules.mercy})`);
+    const act = activeIdx(s);
+    if (act.length === 1 && s.phase !== 'over') finish(s, act[0], 'last');
+  }
+  function checkMercy(s, p, why) {
+    if (s.rules.mercy > 0 && !s.players[p].out && s.players[p].hand.length >= s.rules.mercy) { eliminate(s, p, why); return true; }
+    return false;
+  }
+  function finish(s, w, reason) {
+    s.phase = 'over'; s.winner = w; s.endReason = reason; s.stack = null; s.pending = null; s.mustPlay = null;
+    let pts = 0;
+    s.players.forEach((pl, i) => { if (i !== w) pl.hand.forEach(c => pts += cardPoints(c)); });
+    pts += 250 * s.knocked;
+    s.points = pts;
+    ev(s, { t: 'win', p: w, reason, points: pts });
+    log(s, reason === 'last' ? `🏆 ${nm(s, w)} is the last player standing!` : `🏆 ${nm(s, w)} played their last card and wins!`);
+  }
+
+  function isLegal(s, card) {
+    if (s.stack) return !!(s.rules.stacking && DRAW_VAL[card.k] && DRAW_VAL[card.k] >= s.stack.last);
+    if (card.c === 'W') return true;
+    if (card.c === s.color) return true;
+    const t = top(s);
+    if (card.k === 'num') return t.k === 'num' && t.n === card.n;
+    return card.k === t.k;
+  }
+  function legalIds(s, p) {
+    if (s.phase !== 'play' || s.cur !== p || s.players[p].out) return [];
+    if (s.mustPlay != null) return [s.mustPlay];
+    return s.players[p].hand.filter(c => isLegal(s, c)).map(c => c.id);
+  }
+
+  function refreshUnoAfterSwap(s) {
+    s.players.forEach(pl => { if (pl.out) return; pl.uno = false; pl.pre = false; pl.vuln = pl.hand.length === 1; });
+  }
+  function closeUnoWindows(s, actor) {
+    s.players.forEach((pl, i) => { if (i !== actor) pl.vuln = false; });
+  }
+
+  /* ---------------- setup ---------------- */
+  function createGame(opts) {
+    const rules = Object.assign({}, OFFICIAL_RULES, opts.rules || {});
+    const rng = opts.rng || secureRng();
+    const n = opts.players.length;
+    if (n < 2 || n > 6) throw new Error('2–6 players required');
+    const s = {
+      v: 1, tv: 1, eseq: 0, events: [], log: [],
+      rules, players: opts.players.map(p => ({ id: p.id, name: p.name, bot: p.bot || null, hand: [], out: false, uno: false, pre: false, vuln: false })),
+      dir: 1, cur: 0, draw: shuffle(buildDeck(), rng), discard: [], aside: [], color: null,
+      stack: null, phase: 'play', pending: null, mustPlay: null, winner: null, endReason: null, points: 0, knocked: 0
+    };
+    Object.defineProperty(s, '_rng', { value: rng, enumerable: false, writable: true });
+    for (let r = 0; r < rules.handSize; r++) s.players.forEach(pl => pl.hand.push(s.draw.pop()));
+    // Starting card: if it is an Action/Wild card, ignore it and flip the next one.
+    for (;;) { const c = s.draw.pop(); s.discard.push(c); if (c.k === 'num') break; }
+    s.color = top(s).c;
+    s.cur = opts.first != null ? opts.first : Math.floor(rng() * n);
+    log(s, `Game started — ${nm(s, s.cur)} goes first. Starting card: ${cardName(top(s))}`);
+    ev(s, { t: 'start' });
+    return s;
+  }
+  function attachRng(s, rng) { Object.defineProperty(s, '_rng', { value: rng, enumerable: false, writable: true }); return s; }
+
+  /* ---------------- actions ---------------- */
+  function fail(error) { return { ok: false, error }; }
+
+  function apply(s, p, a) {
+    if (!a || typeof a !== 'object') return fail('Bad action');
+    if (s.phase === 'over') return fail('Game is over');
+    if (!(p >= 0 && p < s.players.length)) return fail('Not a player');
+    if (s.players[p].out) return fail('You are eliminated');
+    const turnAction = ['play', 'draw', 'take', 'pass', 'roul'].includes(a.t);
+    if (turnAction && a.tv != null && a.tv !== s.tv) return fail('Stale action — the table changed');
+    const backup = JSON.stringify(s);
+    let r;
+    try {
+      switch (a.t) {
+        case 'play': r = doPlay(s, p, a); break;
+        case 'draw': r = doDraw(s, p); break;
+        case 'pass': r = doPass(s, p); break;
+        case 'take': r = doTake(s, p); break;
+        case 'roul': r = doRoulette(s, p, a); break;
+        case 'uno': r = doUno(s, p); break;
+        case 'catch': r = doCatch(s, p, a); break;
+        default: r = fail('Unknown action');
+      }
+    } catch (e) {
+      const rng = s._rng; const restored = JSON.parse(backup);
+      Object.keys(s).forEach(k => delete s[k]); Object.assign(s, restored); attachRng(s, rng);
+      return fail('Internal error: ' + e.message);
+    }
+    if (r && r.ok === false) return r;
+    s.v++; if (turnAction) s.tv++;
+    return { ok: true };
+  }
+
+  function doPlay(s, p, a) {
+    if (s.phase !== 'play') return fail('Waiting for a decision');
+    if (s.cur !== p) return fail('Not your turn');
+    const pl = s.players[p];
+    const idx = pl.hand.findIndex(c => c.id === a.id);
+    if (idx < 0) return fail('Card not in your hand');
+    const card = pl.hand[idx];
+    if (s.mustPlay != null && s.mustPlay !== card.id) return fail('You must play the card you drew');
+    if (!isLegal(s, card)) return fail(s.stack ? `Only a draw card of +${s.stack.last} or higher can stack` : 'That card does not match');
+    const needColor = card.c === 'W' && !(card.k === 'roul' && s.rules.rouletteChooser === 'victim');
+    if (needColor && !COLORS.includes(a.color)) return fail('Choose a colour');
+    const willHaveCards = pl.hand.length - 1 - (card.k === 'discAll' ? pl.hand.filter(c => c.id !== card.id && c.c === card.c).length : 0);
+    if (card.k === 'num' && card.n === 7 && willHaveCards > 0) {
+      const t = a.target;
+      if (!(t >= 0 && t < s.players.length) || t === p || s.players[t].out) return fail('Choose a player to swap with');
+    }
+
+    // ---- commit ----
+    closeUnoWindows(s, p);
+    pl.hand.splice(idx, 1); s.discard.push(card); s.mustPlay = null;
+    s.color = card.c === 'W' ? (needColor ? a.color : s.color) : card.c;
+    ev(s, { t: 'play', p, card }); log(s, `${nm(s, p)} played ${cardName(card)}${needColor ? ' → ' + CNAME[a.color] : ''}`);
+
+    if (card.k === 'discAll') {
+      const same = pl.hand.filter(c => c.c === card.c);
+      pl.hand = pl.hand.filter(c => c.c !== card.c);
+      s.discard.splice(s.discard.length - 1, 0, ...same);
+      ev(s, { t: 'discAll', p, n: same.length, c: card.c });
+      if (same.length) log(s, `${nm(s, p)} discarded ${same.length} more ${CNAME[card.c]} card${same.length > 1 ? 's' : ''}`);
+    }
+
+    // UNO status
+    if (pl.hand.length === 1) { if (pl.pre) { pl.uno = true; } else { pl.uno = false; pl.vuln = true; } }
+    else pl.uno = false;
+    pl.pre = false;
+
+    if (pl.hand.length === 0) { finish(s, p, 'empty'); return { ok: true }; }
+
+    let next;
+    switch (card.k) {
+      case 'num':
+        if (card.n === 7) {
+          const t = a.target; const tmp = pl.hand; pl.hand = s.players[t].hand; s.players[t].hand = tmp;
+          refreshUnoAfterSwap(s);
+          ev(s, { t: 'swap', a: p, b: t }); log(s, `🔄 ${nm(s, p)} swapped hands with ${nm(s, t)}`);
+        } else if (card.n === 0) {
+          const act = activeIdx(s); const hands = {};
+          act.forEach(i => { hands[nextFrom(s, i, 1)] = s.players[i].hand; });
+          act.forEach(i => { s.players[i].hand = hands[i]; });
+          refreshUnoAfterSwap(s);
+          ev(s, { t: 'rotate', dir: s.dir }); log(s, `🔁 Everyone passed their hand ${s.dir === 1 ? 'clockwise' : 'counter-clockwise'}`);
+        }
+        next = nextFrom(s, p, 1); break;
+      case 'skip': {
+        const victim = nextFrom(s, p, 1);
+        ev(s, { t: 'skip', p: victim }); log(s, `⛔ ${nm(s, victim)} is skipped`);
+        next = nextFrom(s, p, 2); break;
+      }
+      case 'rev':
+        s.dir *= -1; ev(s, { t: 'rev', dir: s.dir }); log(s, '↩️ Direction reversed');
+        next = activeIdx(s).length === 2 ? p : nextFrom(s, p, 1); break;
+      case 'skipAll':
+        ev(s, { t: 'skipAll', p }); log(s, `⏭️ Everyone skipped — ${nm(s, p)} goes again`);
+        next = p; break;
+      case 'discAll':
+        next = nextFrom(s, p, 1); break;
+      case 'd2': case 'd4': case 'wd6': case 'wd10': case 'wrd4': {
+        if (card.k === 'wrd4') { s.dir *= -1; ev(s, { t: 'rev', dir: s.dir }); }
+        const val = DRAW_VAL[card.k];
+        const stacked = !!s.stack;
+        s.stack = { total: (s.stack ? s.stack.total : 0) + val, last: val };
+        next = nextFrom(s, p, 1);
+        ev(s, { t: 'stack', p, val, total: s.stack.total, target: next, stacked });
+        log(s, `${stacked ? '📚 Stacked! ' : ''}Draw penalty: ${s.stack.total} cards → ${nm(s, next)}`);
+        break;
+      }
+      case 'roul': {
+        const victim = nextFrom(s, p, 1);
+        if (s.rules.rouletteChooser === 'victim') {
+          s.phase = 'roulette'; s.pending = { victim, by: p }; s.cur = victim;
+          log(s, `🎰 Color Roulette! ${nm(s, victim)} must pick a colour`);
+          return { ok: true };
+        }
+        resolveRoulette(s, victim, a.color);
+        if (s.phase !== 'over') next = nextFrom(s, victim, 1); else return { ok: true };
+        break;
+      }
+    }
+    s.cur = next;
+    return { ok: true };
+  }
+
+  function resolveRoulette(s, victim, color) {
+    s.color = color;
+    const flipped = [];
+    for (;;) {
+      const c = drawOne(s, victim);
+      if (!c) break;
+      flipped.push(c);
+      if (checkMercy(s, victim, 'Color Roulette')) break;
+      if (c.c === color) break;
+    }
+    resetUno(s.players[victim]);
+    ev(s, { t: 'roulette', p: victim, color, cards: flipped });
+    log(s, `🎰 ${nm(s, victim)} flipped ${flipped.length} card${flipped.length === 1 ? '' : 's'} to find ${CNAME[color]}`);
+  }
+
+  function doRoulette(s, p, a) {
+    if (s.phase !== 'roulette' || !s.pending || s.pending.victim !== p) return fail('Not your roulette');
+    if (!COLORS.includes(a.color)) return fail('Choose a colour');
+    closeUnoWindows(s, p);
+    s.pending = null; s.phase = 'play';
+    resolveRoulette(s, p, a.color);
+    if (s.phase !== 'over') s.cur = nextFrom(s, p, 1);
+    return { ok: true };
+  }
+
+  function doDraw(s, p) {
+    if (s.phase !== 'play') return fail('Waiting for a decision');
+    if (s.cur !== p) return fail('Not your turn');
+    if (s.stack) return fail('Stack or take the penalty');
+    if (s.mustPlay != null) return fail('Play the card you drew');
+    const pl = s.players[p];
+    if (pl.hand.some(c => isLegal(s, c))) return fail('You have a playable card');
+    closeUnoWindows(s, p); resetUno(pl);
+    let n = 0, found = null;
+    for (;;) {
+      const c = drawOne(s, p);
+      if (!c) break;
+      n++;
+      if (checkMercy(s, p, 'drawing for a playable card')) break;
+      if (isLegal(s, c)) { found = c; break; }
+      if (!s.rules.drawUntilPlayable) break;
+    }
+    ev(s, { t: 'draw', p, n }); log(s, `${nm(s, p)} drew ${n} card${n === 1 ? '' : 's'}`);
+    if (s.phase === 'over') return { ok: true };
+    if (pl.out) { s.cur = nextFrom(s, p, 1); return { ok: true }; }
+    if (found) { s.mustPlay = found.id; return { ok: true }; }
+    s.cur = nextFrom(s, p, 1); // nothing playable (house draw-one, or deck exhausted)
+    if (!n) log(s, 'No cards left to draw — turn passes');
+    return { ok: true };
+  }
+
+  function doPass(s, p) { // house rule only: after drawing one playable card you may keep it
+    if (s.rules.drawUntilPlayable) return fail('Official rules: you must play the drawn card');
+    if (s.phase !== 'play' || s.cur !== p || s.mustPlay == null) return fail('Nothing to pass');
+    s.mustPlay = null; s.cur = nextFrom(s, p, 1); log(s, `${nm(s, p)} kept the card and passed`);
+    return { ok: true };
+  }
+
+  function doTake(s, p) {
+    if (s.phase !== 'play') return fail('Waiting for a decision');
+    if (s.cur !== p) return fail('Not your turn');
+    if (!s.stack) return fail('No penalty to take');
+    closeUnoWindows(s, p);
+    const pl = s.players[p], total = s.stack.total;
+    s.stack = null; resetUno(pl);
+    let n = 0;
+    for (let i = 0; i < total; i++) { if (!drawOne(s, p)) break; n++; if (checkMercy(s, p, `taking a +${total} penalty`)) break; }
+    ev(s, { t: 'penalty', p, n, total }); log(s, `${nm(s, p)} took the penalty: +${n} cards. Penalty resolved.`);
+    if (s.phase !== 'over') s.cur = nextFrom(s, p, 1);
+    return { ok: true };
+  }
+
+  function doUno(s, p) {
+    const pl = s.players[p];
+    if (pl.hand.length === 1 && pl.vuln) { pl.vuln = false; pl.uno = true; ev(s, { t: 'uno', p }); log(s, `📣 ${nm(s, p)} called UNO!`); return { ok: true }; }
+    if (s.phase === 'play' && s.cur === p && pl.hand.length >= 2 && !pl.pre) { pl.pre = true; ev(s, { t: 'uno', p, pre: true }); log(s, `📣 ${nm(s, p)} called UNO!`); return { ok: true }; }
+    return fail('Nothing to call right now');
+  }
+
+  function doCatch(s, p, a) {
+    const t = a.target;
+    if (!(t >= 0 && t < s.players.length) || t === p) return fail('Bad target');
+    const tp = s.players[t];
+    if (tp.out || !tp.vuln || tp.hand.length !== 1) return fail('Too late — nothing to catch');
+    tp.vuln = false;
+    let n = 0;
+    for (let i = 0; i < 2; i++) { if (!drawOne(s, t)) break; n++; if (checkMercy(s, t, 'UNO catch')) break; }
+    ev(s, { t: 'caught', p: t, by: p, n }); log(s, `🚨 ${nm(s, p)} caught ${nm(s, t)} without UNO! +${n} cards`);
+    return { ok: true };
+  }
+
+  /* ---------------- views (hidden information) ---------------- */
+  function view(s, p) {
+    const me = (p >= 0 && p < s.players.length) ? p : -1;
+    const myTurn = me >= 0 && s.cur === me;
+    return {
+      v: s.v, tv: s.tv, me,
+      players: s.players.map(pl => ({ id: pl.id, name: pl.name, bot: pl.bot, out: pl.out, count: pl.hand.length, uno: pl.uno, vuln: pl.vuln })),
+      hand: me >= 0 ? s.players[me].hand.map(c => Object.assign({}, c)) : [],
+      top: Object.assign({}, top(s)), color: s.color, dir: s.dir, cur: s.cur,
+      stack: s.stack ? Object.assign({}, s.stack) : null, phase: s.phase,
+      pending: s.pending ? Object.assign({}, s.pending) : null,
+      mustPlay: myTurn ? s.mustPlay : null,
+      drawCount: s.draw.length, discardCount: s.discard.length,
+      seenColors: COLORS.reduce((o, c) => (o[c] = s.discard.filter(x => x.c === c).length, o), {}),
+      legal: me >= 0 ? legalIds(s, me) : [],
+      canDraw: myTurn && s.phase === 'play' && !s.stack && s.mustPlay == null && !s.players[me].hand.some(c => isLegal(s, c)),
+      canTake: myTurn && s.phase === 'play' && !!s.stack,
+      canPass: myTurn && s.phase === 'play' && s.mustPlay != null && !s.rules.drawUntilPlayable,
+      canPreUno: myTurn && s.phase === 'play' && me >= 0 && s.players[me].hand.length === 2 && !s.players[me].pre,
+      preCalled: me >= 0 && s.players[me].pre,
+      log: s.log.slice(-40), events: s.events.slice(),
+      winner: s.winner, endReason: s.endReason, points: s.points, rules: Object.assign({}, s.rules)
+    };
+  }
+
+  /* ---------------- AI (uses only the player's own view) ---------------- */
+  function bestColor(hand, rng) {
+    const cnt = { R: 0, Y: 0, G: 0, B: 0 };
+    hand.forEach(c => { if (c.c !== 'W') cnt[c.c]++; });
+    const max = Math.max(...Object.values(cnt));
+    const opts = COLORS.filter(c => cnt[c] === max);
+    return opts[Math.floor(rng() * opts.length)];
+  }
+  function ai(V, level, rng) {
+    rng = rng || Math.random;
+    const me = V.me; if (me < 0) return null;
+    if (V.phase === 'roulette' && V.pending && V.pending.victim === me) {
+      if (level === 'hard') { // fewest seen in the public discard pile => most likely still in the deck
+        const seen = V.seenColors; const min = Math.min(...COLORS.map(c => seen[c]));
+        const o = COLORS.filter(c => seen[c] === min); return { t: 'roul', color: o[Math.floor(rng() * o.length)] };
+      }
+      return { t: 'roul', color: COLORS[Math.floor(rng() * 4)] };
+    }
+    if (V.cur !== me || V.phase !== 'play') return null;
+    if (V.canTake && !V.legal.length) return { t: 'take' };
+    if (V.canDraw) return { t: 'draw' };
+    if (!V.legal.length) return V.canPass ? { t: 'pass' } : null;
+    const hand = V.hand, legal = hand.filter(c => V.legal.includes(c.id));
+    const others = V.players.map((p, i) => ({ i, count: p.count, out: p.out })).filter(o => o.i !== me && !o.out);
+    const nIdx = (() => { const n = V.players.length; let j = me; let g = 0; do { j = (j + V.dir + n) % n; } while (V.players[j].out && ++g <= n); return j; })();
+    const nextCount = V.players[nIdx].count;
+    const mercy = V.rules.mercy || 999;
+
+    let pick;
+    if (level === 'easy') pick = legal[Math.floor(rng() * legal.length)];
+    else {
+      let best = -1e9;
+      for (const c of legal) {
+        let sc = rng() * 0.5;
+        const val = DRAW_VAL[c.k] || 0;
+        if (V.stack) {
+          sc -= val; // stack with the smallest card that works…
+          if (level === 'hard' && nextCount + V.stack.total + val >= mercy) sc += 50 + val; // …unless it knocks them out
+        } else {
+          if (c.c === V.color) sc += 2;
+          if (c.c === 'W') sc -= hand.length > 3 ? 6 : 0;
+          if (c.k === 'discAll') sc += 3 * hand.filter(x => x.c === c.c && x.id !== c.id).length;
+          if (nextCount <= 2) { if (val) sc += 8 + val; if (c.k === 'skip' || c.k === 'skipAll') sc += 7; if (c.k === 'roul') sc += 6; }
+          if (level === 'hard') {
+            if (val && nextCount + val >= mercy) sc += 30;
+            if (val && nextCount > 6 && hand.length > 3) sc -= 3; // keep draw cards for defence
+            if (c.k === 'skipAll' && hand.length > 1) sc += 2;
+          }
+          if (c.k === 'num' && c.n === 7 && hand.length > 1) {
+            const min = Math.min(...others.map(o => o.count));
+            sc += (hand.length - 1 - min) * (level === 'hard' ? 2 : 1);
+          }
+          if (c.k === 'num' && c.n === 0 && hand.length > 1) {
+            const n = V.players.length; let j = me; let g = 0; do { j = (j - V.dir + n) % n; } while (V.players[j].out && ++g <= n);
+            sc += (hand.length - 1 - V.players[j].count) * (level === 'hard' ? 1.5 : 0.7);
+          }
+        }
+        if (sc > best) { best = sc; pick = c; }
+      }
+    }
+    const rest = hand.filter(c => c.id !== pick.id);
+    const act = { t: 'play', id: pick.id, tv: V.tv };
+    if (pick.c === 'W' && !(pick.k === 'roul' && V.rules.rouletteChooser === 'victim')) act.color = level === 'easy' ? COLORS[Math.floor(rng() * 4)] : bestColor(rest, rng);
+    if (pick.k === 'num' && pick.n === 7) {
+      if (level === 'easy') act.target = others[Math.floor(rng() * others.length)].i;
+      else act.target = others.reduce((a, b) => (b.count < a.count ? b : a)).i;
+    }
+    return act;
+  }
+
+  const Engine = {
+    COLORS, CNAME, KNAME, DRAW_VAL, WILD_KINDS, OFFICIAL_RULES,
+    buildDeck, createGame, apply, view, ai, legalIds, isLegal, cardName, cardPoints,
+    seededRng, secureRng, attachRng, nextFrom
+  };
+  if (typeof module !== 'undefined' && module.exports) module.exports = Engine; else root.Engine = Engine;
+})(typeof self !== 'undefined' ? self : this);
+
+</script>
+<script>
+/* =====================================================================
+   NO MERCY — app: UI, local/AI play, serverless online (PeerJS/WebRTC),
+   free peer-to-peer voice chat. The HOST browser runs the authoritative
+   Engine; clients only send intents and only receive their own view.
+   ===================================================================== */
+'use strict';
+const E = window.Engine;
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const rnd = n => Math.floor(Math.random() * n);
+const PREFIX = 'nomercy-gh-v1-';
+const PEER_OPTS = { debug: 1, config: { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }, { urls: 'stun:stun1.l.google.com:19302' }, { urls: 'stun:global.stun.twilio.com:3478' }] } };
+const AVC = ['#ff3d8b', '#ffd23f', '#21d4fd', '#7ae582', '#ff8c42', '#b794ff'];
+const BOT_NAMES = ['Robo Raja', 'Chip', 'Byte', 'Pixel', 'Turbo', 'Nova', 'Glitch', 'Sparky', 'Bolt'];
+const CHEX = { R: '#ee1c25', Y: '#ffd400', G: '#1fa64a', B: '#0a6fd6' };
+const PAT = { R: '▲', Y: '●', G: '■', B: '◆' };
+const QUICK = ['😂', '😱', '😈', '🔥', '👏', '💀', '🙏', 'GG!', 'Noooo!', 'Nice one', 'Revenge 😤', 'UNO!'];
+const SPEED = Math.max(1, +(new URLSearchParams(location.search).get('speed') || 1)); // test hook
+const BOT_PRECALL = { easy: 0.55, medium: 0.85, hard: 1 };
+const BOT_CATCH = { easy: 0.25, medium: 0.6, hard: 0.95 };
+
+const token = sessionStorage.getItem('nm_token') || (() => { const t = 'u' + Math.random().toString(36).slice(2, 10) + Date.now().toString(36); sessionStorage.setItem('nm_token', t); return t; })();
+const prefs = Object.assign({ name: '', sound: false, sfx: 0.7, music: 0.3, reduced: false, effects: true }, JSON.parse(localStorage.getItem('nm_prefs') || '{}'));
+const savePrefs = () => localStorage.setItem('nm_prefs', JSON.stringify(prefs));
+const urlRoom = (new URLSearchParams(location.search).get('room') || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+
+const App = {
+  screen: urlRoom ? 'join' : 'menu', mode: null, code: urlRoom, peer: null, conn: null,
+  L: null, V: null, status: '', modal: null, handoff: null, localViewer: -1,
+  lastEv: 0, evInit: false, known: new Set(), lastTop: null, seq: 0,
+  chatOpen: false, logOpen: false, chatSeen: 0, muted: new Set(), timerEnd: 0, pingT: null, lastSeen: 0,
+  setup: { players: [], rules: Object.assign({}, E.OFFICIAL_RULES), timer: 0 }
+};
+let H = null; // host-only authoritative room
+
+/* =================== small utils =================== */
+function toast(msg, bad) { const t = $('#toast'); t.textContent = msg; t.className = bad ? 'bad show' : 'show'; clearTimeout(toast._t); toast._t = setTimeout(() => t.className = bad ? 'bad' : '', 2800); }
+const roomLink = code => `${location.origin}${location.pathname}?room=${code}`;
+const genCode = () => { const c = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; let s = ''; for (let i = 0; i < 5; i++) s += c[rnd(c.length)]; return s; };
+const avatar = (name, i, sz) => `<span class="av" style="background:${AVC[(i ?? 0) % 6]};${sz ? `width:${sz}px;height:${sz}px` : ''}">${esc((name || '?')[0])}</span>`;
+function applyMotion() { document.body.classList.toggle('reduced', !!prefs.reduced); document.body.classList.toggle('motion', !prefs.reduced); }
+
+/* =================== sound (WebAudio, synthesized — no assets) =================== */
+const Snd = {
+  ctx: null, musicT: null,
+  init() { if (!this.ctx) { try { this.ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { } } if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume(); },
+  tone(f, d, type, vol, delay, slide, gainScale) {
+    if (!prefs.sound || !this.ctx) return; const t0 = this.ctx.currentTime + (delay || 0);
+    const o = this.ctx.createOscillator(), g = this.ctx.createGain();
+    o.type = type || 'sine'; o.frequency.setValueAtTime(f, t0); if (slide) o.frequency.exponentialRampToValueAtTime(slide, t0 + d);
+    const v = Math.max(0.0002, (vol || 0.2) * (gainScale ?? prefs.sfx));
+    g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(v, t0 + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t0 + d);
+    o.connect(g).connect(this.ctx.destination); o.start(t0); o.stop(t0 + d + 0.02);
+  },
+  play(name) {
+    const T = (...a) => this.tone(...a);
+    switch (name) {
+      case 'card': T(520, .08, 'triangle', .25); T(780, .06, 'triangle', .15, .04); break;
+      case 'draw': T(300, .07, 'square', .08); break;
+      case 'special': T(440, .1, 'square', .15); T(660, .1, 'square', .15, .08); T(880, .14, 'square', .15, .16); break;
+      case 'penalty': T(220, .35, 'sawtooth', .2, 0, 90); break;
+      case 'roulette': for (let i = 0; i < 8; i++) T(400 + i * 60, .05, 'triangle', .15, i * .06); break;
+      case 'elim': T(330, .25, 'sawtooth', .25, 0, 110); T(160, .5, 'sawtooth', .2, .22, 50); break;
+      case 'uno': T(660, .12, 'square', .22); T(990, .2, 'square', .22, .1); break;
+      case 'win': [523, 659, 784, 1047].forEach((f, i) => T(f, .22, 'triangle', .25, i * .12)); break;
+      case 'lose': [392, 330, 262].forEach((f, i) => T(f, .3, 'triangle', .2, i * .18)); break;
+      case 'turn': T(880, .1, 'sine', .15); break;
+    }
+  },
+  music(on) {
+    clearInterval(this.musicT); this.musicT = null;
+    if (!on || !prefs.sound || !this.ctx || prefs.music <= 0) return;
+    const prog = [[262, 330, 392], [220, 262, 330], [175, 220, 262], [196, 247, 294]]; let i = 0;
+    const step = () => { const ch = prog[i++ % 4]; ch.forEach((f, k) => this.tone(f, 1.6, 'sine', .07, k * .18, 0, prefs.music)); };
+    step(); this.musicT = setInterval(step, 1800);
+  }
+};
+
+/* =================== VOICE CHAT (free: WebRTC mesh over PeerJS) ===================
+   Joining voice = LISTEN ONLY (no microphone, no permission prompt).
+   Each player decides for themselves: 🎙️ talk / 🔇 mic off / hold-to-talk,
+   and can silence or turn down any other speaker just for themselves. */
+const Voice = {
+  joined: false, silent: null, micStream: null, micOn: false, out: null,
+  calls: {}, audios: {}, retryAt: {}, meters: {}, ctx: null, pollT: null, busy: false,
+  vmuted: new Set(), vol: {}, panelOpen: false, panelKey: '', ptt: false,
+  audioCtx() { if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)(); if (this.ctx.state === 'suspended') this.ctx.resume(); return this.ctx; },
+  currentTrack() { return this.micOn && this.micStream ? this.micStream.getAudioTracks()[0] : this.silent; },
+  start() {
+    if (this.joined) return;
+    if (!App.peer || !App.L || App.mode === 'local') return toast('Voice works in online rooms', true);
+    try { const dest = this.audioCtx().createMediaStreamDestination(); this.silent = dest.stream.getAudioTracks()[0]; }
+    catch (e) { return toast('Voice is not supported in this browser', true); }
+    this.joined = true; this.micOn = false; this.out = new MediaStream([this.silent]);
+    clearInterval(this.pollT); this.pollT = setInterval(() => this.poll(), 150);
+    send({ t: 'voice', on: true, mic: false });
+    toast('🎧 You joined voice — listening. Tap 🎙️ when you want to talk');
+    this.refreshUI(); this.sync();
+  },
+  async setMic(on) {
+    if (!this.joined) return;
+    if (on && !this.micStream) {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return toast('Talking needs HTTPS — works on GitHub Pages', true);
+      if (this.busy) return; this.busy = true;
+      try { this.micStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }, video: false }); }
+      catch (e) { this.busy = false; this.ptt = false; return toast(e && e.name === 'NotAllowedError' ? '🎙️ Microphone permission was blocked — allow it in your browser settings' : '🎙️ No microphone found', true); }
+      this.busy = false;
+      if (!this.joined) { this.micStream.getTracks().forEach(t => t.stop()); this.micStream = null; return; }
+      this.meter(token, this.micStream);
+    }
+    this.micOn = !!on && !!this.micStream;
+    if (this.micStream) this.micStream.getAudioTracks().forEach(t => t.enabled = this.micOn);
+    const tr = this.currentTrack(); this.out = new MediaStream([tr]);
+    Object.values(this.calls).forEach(c => { try { const s = c.peerConnection && c.peerConnection.getSenders().find(x => x.track ? x.track.kind === 'audio' : true); if (s) s.replaceTrack(tr); } catch (e) { } });
+    send({ t: 'voice', on: true, mic: this.micOn });
+    this.refreshUI();
+  },
+  toggleMic() { this.setMic(!this.micOn); },
+  stop(silentStop) {
+    const was = this.joined;
+    Object.keys(this.calls).forEach(id => this.drop(id));
+    Object.keys(this.audios).forEach(id => this.drop(id));
+    if (this.micStream) this.micStream.getTracks().forEach(t => t.stop());
+    if (this.silent) this.silent.stop();
+    this.micStream = null; this.silent = null; this.out = null; this.micOn = false; this.joined = false; this.ptt = false;
+    this.meters = {}; this.retryAt = {}; clearInterval(this.pollT); this.panelOpen = false;
+    document.querySelectorAll('.speaking').forEach(el => el.classList.remove('speaking'));
+    if (!silentStop && was) { send({ t: 'voice', on: false }); toast('Left voice chat'); }
+    this.refreshUI();
+  },
+  drop(id) {
+    const c = this.calls[id]; delete this.calls[id]; if (c) { try { c.close(); } catch (e) { } }
+    const a = this.audios[id]; if (a) { a.srcObject = null; a.remove(); delete this.audios[id]; }
+    if (id !== token) delete this.meters[id];
+  },
+  applyAudio(id) { const a = this.audios[id]; if (!a) return; a.muted = this.vmuted.has(id); a.volume = this.vol[id] ?? 1; },
+  sync() {
+    const L = App.L; if (!L) return;
+    const want = new Map();
+    if (this.joined && App.peer && !App.peer.destroyed) L.seats.forEach(s => { if (s.id !== token && !s.bot && s.voice && s.pid) want.set(s.id, s.pid); });
+    Object.keys(this.calls).forEach(id => { if (!want.has(id) || this.calls[id]._pid !== want.get(id)) this.drop(id); });
+    want.forEach((pid, id) => {
+      if (this.calls[id] || !(token < id) || Date.now() < (this.retryAt[id] || 0)) return;
+      let call = null; try { call = App.peer.call(pid, this.out, { metadata: { token } }); } catch (e) { }
+      if (call) this.attach(id, pid, call); else this.retryAt[id] = Date.now() + 4000;
+    });
+    Object.keys(this.audios).forEach(id => this.applyAudio(id));
+    this.refreshUI();
+  },
+  onCall(call) {
+    const id = String((call.metadata && call.metadata.token) || '');
+    const seat = App.L && App.L.seats.find(x => x.id === id);
+    if (!this.joined || !seat || id === token) { try { call.close(); } catch (e) { } return; }
+    if (this.calls[id]) this.drop(id);
+    call.answer(this.out);
+    this.attach(id, call.peer, call);
+  },
+  attach(id, pid, call) {
+    call._pid = pid; this.calls[id] = call;
+    call.on('stream', rs => {
+      if (this.calls[id] !== call) return;
+      let a = this.audios[id];
+      if (!a) { a = document.createElement('audio'); a.autoplay = true; a.setAttribute('playsinline', ''); $('#voiceAudio').appendChild(a); this.audios[id] = a; }
+      a.srcObject = rs; this.applyAudio(id);
+      const pr = a.play(); if (pr && pr.catch) pr.catch(() => toast('Tap anywhere to hear voice chat'));
+      this.meter(id, rs);
+    });
+    const end = () => { if (this.calls[id] !== call) return; this.drop(id); this.retryAt[id] = Date.now() + 4000; setTimeout(() => this.sync(), 4100); };
+    call.on('close', end); call.on('error', end);
+  },
+  meter(id, stream) {
+    try { const an = this.audioCtx().createAnalyser(); an.fftSize = 512; this.audioCtx().createMediaStreamSource(stream).connect(an); this.meters[id] = { an, buf: new Uint8Array(an.fftSize) }; } catch (e) { }
+  },
+  poll() {
+    for (const [id, m] of Object.entries(this.meters)) {
+      m.an.getByteTimeDomainData(m.buf); let sum = 0;
+      for (let i = 0; i < m.buf.length; i++) { const x = (m.buf[i] - 128) / 128; sum += x * x; }
+      const talking = Math.sqrt(sum / m.buf.length) > 0.035 && !(id === token && !this.micOn) && !this.vmuted.has(id);
+      document.querySelectorAll(`[data-vid="${CSS.escape(id)}"]`).forEach(el => el.classList.toggle('speaking', talking));
+    }
+  },
+  /* ---- UI: top-bar controls + personal speaker panel (both outside #app, updated in place) ---- */
+  refreshUI() {
+    document.querySelectorAll('.vslot').forEach(el => { const h = voiceBarHTML(); if (el.innerHTML !== h) el.innerHTML = h; });
+    this.renderPanel();
+  },
+  renderPanel(force) {
+    const p = $('#vpanel'); if (!p) return;
+    const L = App.L;
+    if (!this.panelOpen || !this.joined || !L) { p.hidden = true; this.panelKey = ''; return; }
+    p.hidden = false;
+    const others = L.seats.filter(s => s.voice && s.id !== token && !s.bot);
+    const key = [this.micOn, this.ptt, ...others.map(s => s.id + s.name + s.mic + this.vmuted.has(s.id))].join('|');
+    if (key === this.panelKey && !force) return; this.panelKey = key;
+    p.innerHTML = `<h4>🎧 Voice chat <button class="x" type="button" data-v="close" aria-label="Close">×</button></h4>
+      <div class="bigmic"><button type="button" class="btn ${this.micOn ? 'g' : 'w'}" data-v="mic">${this.micOn ? '🎙️ Mic ON — tap to mute' : '🔇 Mic OFF — tap to talk'}</button></div>
+      <div class="bigmic"><button type="button" class="btn c" data-v="ptt" id="pttBtn">${this.ptt ? '🗣️ Talking…' : '✋ Hold to talk'}</button></div>
+      <div class="note" style="margin-bottom:6px">Only you decide when your mic is on. The controls below only change what <b>you</b> hear.</div>
+      ${others.length ? others.map(s => `<div class="vrow"><span class="vring" data-vid="${esc(s.id)}">${avatar(s.name, s.av)}</span><span class="nm">${esc(s.name)} ${s.mic ? '🎙️' : '<span class="note">mic off</span>'}</span>
+        <input type="range" min="0" max="1" step="0.05" value="${this.vol[s.id] ?? 1}" data-vvol="${esc(s.id)}" aria-label="Volume for ${esc(s.name)}" ${this.vmuted.has(s.id) ? 'disabled' : ''}>
+        <button type="button" class="btn xs ${this.vmuted.has(s.id) ? 'p' : 'w'}" data-vmute="${esc(s.id)}" aria-label="${this.vmuted.has(s.id) ? 'Unmute' : 'Mute'} ${esc(s.name)}">${this.vmuted.has(s.id) ? '🔇' : '🔈'}</button></div>`).join('')
+        : '<div class="note">Nobody else is in voice yet — invite them to tap 🎧 Join voice.</div>'}
+      <button type="button" class="btn w mt" data-v="leave">📵 Leave voice</button>`;
+  }
+};
+function voiceBarHTML() {
+  if (!App.mode || App.mode === 'local' || !App.L) return '';
+  const n = App.L.seats.filter(s => s.voice).length;
+  if (!Voice.joined) return `<button type="button" class="btn sm g" data-v="join" title="Join voice chat (listen only — you choose when to talk)">🎧 Join voice${n ? ` · ${n}` : ''}</button>`;
+  return `<span class="vgroup"><button type="button" class="btn sm ${Voice.micOn ? 'g' : 'p'}" data-v="mic" aria-pressed="${Voice.micOn}" title="Your microphone">${Voice.micOn ? '🎙️ On' : '🔇 Off'}</button><button type="button" class="btn sm w" data-v="panel" title="Voice settings & people">👥 ${n}</button></span>`;
+}
+const vslot = () => `<span class="vslot">${voiceBarHTML()}</span>`;
+const vIcon = s => s && s.voice ? `<span class="vic" title="${s.mic ? 'Mic on' : 'Listening'}">${s.mic ? '🎙️' : '🎧'}</span>` : '';
+
+/* =================== card rendering =================== */
+const SVG = {
+  skip: `<svg viewBox="-50 -50 100 100"><circle r="33" fill="none" stroke="currentColor" stroke-width="14"/><line x1="-23" y1="23" x2="23" y2="-23" stroke="currentColor" stroke-width="14"/></svg>`,
+  rev: `<svg viewBox="-50 -50 100 100"><g fill="currentColor" stroke="#111" stroke-width="3" stroke-linejoin="round"><path d="M-34 6 L4 -32 L4 -44 L30 -18 L4 8 L4 -6 L-20 18 Z"/><path d="M34 -6 L-4 32 L-4 44 L-30 18 L-4 -8 L-4 6 L20 -18 Z"/></g></svg>`,
+  skipAll: `<svg viewBox="-50 -50 100 100"><circle r="22" fill="none" stroke="currentColor" stroke-width="10"/><line x1="-15" y1="15" x2="15" y2="-15" stroke="currentColor" stroke-width="10"/><path d="M-40 -8 A41 41 0 0 1 30 -28" fill="none" stroke="currentColor" stroke-width="8"/><path d="M40 8 A41 41 0 0 1 -30 28" fill="none" stroke="currentColor" stroke-width="8"/><path d="M22 -40 L38 -26 L18 -18 Z M-22 40 L-38 26 L-18 18 Z" fill="currentColor"/></svg>`,
+  discAll: `<svg viewBox="-50 -50 100 100"><g stroke="#111" stroke-width="3"><rect x="-38" y="-30" width="34" height="50" rx="6" fill="currentColor" transform="rotate(-18)"/><rect x="-17" y="-28" width="34" height="50" rx="6" fill="currentColor"/><rect x="4" y="-26" width="34" height="50" rx="6" fill="currentColor" transform="rotate(18)"/></g><path d="M-26 34 L26 34" stroke="currentColor" stroke-width="8" stroke-linecap="round"/></svg>`,
+  roul: `<svg viewBox="-50 -50 100 100"><g stroke="#111" stroke-width="3"><path d="M0 0 L0 -40 A40 40 0 0 1 40 0 Z" fill="#ee1c25"/><path d="M0 0 L40 0 A40 40 0 0 1 0 40 Z" fill="#ffd400"/><path d="M0 0 L0 40 A40 40 0 0 1 -40 0 Z" fill="#1fa64a"/><path d="M0 0 L-40 0 A40 40 0 0 1 0 -40 Z" fill="#0a6fd6"/><circle r="9" fill="#fff"/><path d="M-7 -46 L7 -46 L0 -30 Z" fill="#fff"/></g></svg>`
+};
+function cardInner(c) {
+  const k = c.k;
+  let mid, corner;
+  if (k === 'num') { const t = (c.n === 6 || c.n === 9) ? `<u>${c.n}</u>` : c.n; mid = `<div class="mid">${t}</div>`; corner = t; }
+  else if (k === 'skip' || k === 'rev' || k === 'skipAll' || k === 'discAll' || k === 'roul') { mid = `<div class="mid">${SVG[k]}</div>`; corner = SVG[k]; }
+  else if (k === 'wrd4') { mid = `<div class="mid sm" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px"><span style="width:58%;display:block">${SVG.rev}</span>+4</div>`; corner = '+4'; }
+  else { const n = E.DRAW_VAL[k]; mid = `<div class="mid ${n >= 10 ? 'sm' : ''}">+${n}</div>`; corner = '+' + n; }
+  return `<div class="f"></div>${mid}<div class="cn tl">${corner}</div><div class="cn br">${corner}</div>${c.c !== 'W' ? `<div class="pat" aria-hidden="true">${PAT[c.c]}</div>` : ''}`;
+}
+const cardHTML = (c, cls, extra) => `<div class="card c-${c.c} k-${c.k} ${cls || ''}" role="img" aria-label="${esc(E.cardName(c))}" ${extra || ''}>${cardInner(c)}</div>`;
+const backHTML = cls => `<div class="card back ${cls || ''}" aria-hidden="true"><div class="f"></div><div class="mid">NO<br>MERCY</div></div>`;
+const sortHand = h => h.slice().sort((a, b) => { const o = 'RYGBW'; return o.indexOf(a.c) - o.indexOf(b.c) || (a.k === 'num' ? a.n : 20 + E.KNAME[a.k].length) - (b.k === 'num' ? b.n : 20 + E.KNAME[b.k].length); });
+
+/* =================== HOST (authoritative room) =================== */
+function hostInit(mode, code) {
+  H = {
+    mode, code, hostId: token, seats: [], game: null, round: 0,
+    settings: { rules: Object.assign({}, E.OFFICIAL_RULES), timer: 0, password: '' },
+    chat: [], scores: {}, wins: {}, rematch: new Set(), lastResult: null,
+    conns: {}, lastSeen: {}, seqs: {}, rate: {}, botT: null, turnT: null, catchT: {}, deadline: 0, tickT: null
+  };
+  H.tickT = setInterval(hostTick, 4000);
+}
+const seatById = id => H.seats.find(s => s.id === id);
+function addSeat(o) {
+  const used = H.seats.map(s => s.av);
+  let av = 0; while (used.includes(av) && av < 6) av++;
+  H.seats.push({ id: o.id, name: o.name, bot: o.bot || null, online: true, ready: !!o.bot || H.mode === 'local' || o.id === H.hostId, av: av % 6, pid: o.pid || '', voice: false, mic: false });
+}
+function uniqueName(n) { let name = n, i = 2; while (H.seats.some(p => p.name.toLowerCase() === name.toLowerCase())) name = `${n} ${i++}`; return name; }
+function sysChat(text) { H.chat.push({ sys: true, text, ts: Date.now() }); if (H.chat.length > 60) H.chat.shift(); }
+function gameIdx(id) { return H.game ? H.game.players.findIndex(p => p.id === id) : -1; }
+
+function lobbyPublic() {
+  const g = H.game;
+  return {
+    code: H.code, mode: H.mode, hostId: H.hostId, round: H.round,
+    seats: H.seats.map(s => ({ id: s.id, name: s.name, bot: s.bot, online: s.online, ready: s.ready, av: s.av, pid: s.pid || '', voice: !!s.voice, mic: !!s.mic })),
+    settings: { rules: H.settings.rules, timer: H.settings.timer, hasPw: !!H.settings.password },
+    chat: H.chat.slice(-50), inGame: !!g && g.phase !== 'over', gameOver: !!g && g.phase === 'over',
+    scores: H.scores, wins: H.wins, rematch: [...H.rematch], lastResult: H.lastResult,
+    timerLeft: H.deadline ? Math.max(0, H.deadline - Date.now()) : 0,
+    gameIds: g ? g.players.map(p => p.id) : []
+  };
+}
+
+function hostBroadcast() {
+  if (!H) return;
+  const L = lobbyPublic();
+  if (H.mode === 'local') {
+    let viewer = -1; App.handoff = null;
+    if (H.game) {
+      const g = H.game;
+      const actor = g.phase === 'roulette' ? g.pending.victim : g.cur;
+      const allHumans = g.players.map((p, i) => p.bot ? -1 : i).filter(i => i >= 0);
+      if (allHumans.length === 1) viewer = allHumans[0];
+      else if (g.phase === 'over') viewer = -1;
+      else if (!g.players[actor].bot) { if (App.localViewer === actor) viewer = actor; else App.handoff = actor; }
+    }
+    onLobby(L); if (H.game) onView(E.view(H.game, viewer)); else render();
+    return;
+  }
+  H.seats.forEach(s => {
+    if (s.bot) return;
+    const msgV = H.game ? E.view(H.game, gameIdx(s.id)) : null;
+    if (s.id === H.hostId) { onLobby(L); if (msgV) onView(msgV); else render(); return; }
+    const c = H.conns[s.id];
+    if (c && c.open) { try { c.send({ t: 'L', L }); if (msgV) c.send({ t: 'V', V: msgV }); } catch (e) { } }
+  });
+}
+
+function hostTick() {
+  if (!H || H.mode === 'local') return;
+  const now = Date.now(); let ch = false;
+  H.seats.forEach(s => { if (!s.bot && s.id !== H.hostId && s.online && now - (H.lastSeen[s.id] || 0) > 15000) { s.online = false; s.voice = false; s.mic = false; ch = true; sysChat(`${s.name} disconnected`); } });
+  if (ch) { schedule(); hostBroadcast(); }
+}
+
+function hostStart() {
+  const n = H.seats.length;
+  if (n < 2 || n > 6) return toast('Need 2–6 players', true);
+  if (H.mode !== 'local' && H.seats.some(s => !s.bot && !s.ready)) return toast('Waiting for everyone to be ready', true);
+  if (H.settings.rules.targetScore && H.lastResult && H.lastResult.matchOver) { H.scores = {}; H.wins = {}; }
+  H.seats.forEach(s => { if (H.scores[s.id] == null) H.scores[s.id] = 0; if (H.wins[s.id] == null) H.wins[s.id] = 0; });
+  H.game = E.createGame({ players: H.seats.map(s => ({ id: s.id, name: s.name, bot: s.bot })), rules: H.settings.rules, rng: E.secureRng() });
+  H.round++; H.rematch.clear(); H.lastResult = null; App.localViewer = -1;
+  sysChat(`Round ${H.round} started`);
+  afterChange();
+}
+
+function hostAction(seatId, a) {
+  if (!H.game) return { ok: false, error: 'No game running' };
+  const idx = gameIdx(seatId);
+  if (idx < 0) return { ok: false, error: 'You are watching this round' };
+  const r = E.apply(H.game, idx, a);
+  if (r.ok) afterChange();
+  return r;
+}
+
+function afterChange() {
+  const g = H.game;
+  if (g && g.phase === 'over' && !H.lastResult) {
+    const w = g.players[g.winner];
+    H.scores[w.id] = (H.scores[w.id] || 0) + g.points; H.wins[w.id] = (H.wins[w.id] || 0) + 1;
+    const target = g.rules.targetScore;
+    H.lastResult = { winnerId: w.id, winner: w.name, reason: g.endReason, points: g.points, matchOver: !target || H.scores[w.id] >= target };
+    clearTimeout(H.turnT); H.deadline = 0;
+  }
+  schedule();
+  hostBroadcast();
+}
+
+function schedule() {
+  clearTimeout(H.botT); clearTimeout(H.turnT); H.deadline = 0;
+  const g = H.game; if (!g || g.phase === 'over') return;
+  const actor = g.phase === 'roulette' ? g.pending.victim : g.cur;
+  const pl = g.players[actor], key = g.tv + ':' + actor + ':' + g.phase;
+  if (pl.bot) H.botT = setTimeout(() => botMove(actor, key), (950 + rnd(600)) / SPEED);
+  else {
+    const seat = seatById(pl.id);
+    let ms = H.settings.timer ? H.settings.timer * 1000 : 0;
+    if (H.mode !== 'local' && seat && !seat.online) ms = ms ? Math.min(ms, 8000) : 8000;
+    if (ms) { H.deadline = Date.now() + ms; H.turnT = setTimeout(() => autoMove(actor, key), ms); }
+  }
+  g.players.forEach((p, i) => {
+    if (!p.vuln) { delete H.catchT[i]; return; }
+    if (H.catchT[i]) return;
+    const bots = g.players.map((b, j) => (b.bot && !b.out && j !== i) ? j : -1).filter(j => j >= 0);
+    if (!bots.length) return;
+    const by = bots[rnd(bots.length)];
+    H.catchT[i] = setTimeout(() => {
+      const gg = H && H.game; if (!gg || gg !== g) return;
+      if (gg.players[i].vuln && Math.random() < BOT_CATCH[gg.players[by].bot]) { const r = E.apply(gg, by, { t: 'catch', target: i }); if (r.ok) afterChange(); }
+    }, (1400 + rnd(1600)) / SPEED);
+  });
+}
+const stillKey = (g, actor, key) => g === H.game && g.phase !== 'over' && (g.tv + ':' + actor + ':' + g.phase) === key;
+function botMove(actor, key) {
+  const g = H && H.game; if (!g || !stillKey(g, actor, key)) return;
+  const lvl = g.players[actor].bot;
+  let V = E.view(g, actor);
+  if (V.canPreUno && Math.random() < BOT_PRECALL[lvl]) { E.apply(g, actor, { t: 'uno' }); V = E.view(g, actor); }
+  const a = E.ai(V, lvl);
+  if (a) { const r = E.apply(g, actor, a); if (!r.ok) console.warn('bot rejected', r.error, a); }
+  afterChange();
+}
+function autoMove(actor, key) {
+  const g = H && H.game; if (!g || !stillKey(g, actor, key)) return;
+  const a = E.ai(E.view(g, actor), 'easy');
+  if (a) { E.apply(g, actor, a); sysChat(`⏱️ Time's up — auto-move for ${g.players[actor].name}`); }
+  afterChange();
+}
+
+/* ---------- host networking ---------- */
+function hostOnConn(conn) {
+  conn.on('data', d => hostData(conn, d));
+  conn.on('close', () => { const id = conn._pid; if (H && id && H.conns[id] === conn) { delete H.conns[id]; const s = seatById(id); if (s && s.online) { s.online = false; s.voice = false; s.mic = false; sysChat(`${s.name} disconnected`); schedule(); hostBroadcast(); } } });
+  conn.on('error', () => { });
+}
+function hostData(conn, m) {
+  if (!H || !m || typeof m !== 'object') return;
+  if (m.t === 'join') {
+    const id = String(m.token || '').slice(0, 40); if (!id || id === H.hostId) return;
+    let s = seatById(id);
+    if (!s) {
+      if (H.settings.password && String(m.pw || '') !== H.settings.password) { try { conn.send({ t: 'err', msg: 'Wrong room password', fatal: true }); } catch (e) { } return; }
+      if (H.seats.length >= 6) { try { conn.send({ t: 'err', msg: 'Room is full (6 players)', fatal: true }); } catch (e) { } return; }
+      addSeat({ id, name: uniqueName(String(m.name || '').trim().slice(0, 14) || 'Player') });
+      s = seatById(id); sysChat(`${s.name} joined`);
+    } else if (!s.online) { sysChat(`${s.name} reconnected`); }
+    s.online = true; s.pid = String(m.pid || '').slice(0, 80); s.voice = false; s.mic = false;
+    const old = H.conns[id]; H.conns[id] = conn; conn._pid = id; H.lastSeen[id] = Date.now();
+    if (old && old !== conn) { try { old.close(); } catch (e) { } }
+    schedule(); hostBroadcast(); return;
+  }
+  const id = conn._pid; if (!id || H.conns[id] !== conn) return;
+  H.lastSeen[id] = Date.now();
+  const s = seatById(id); if (!s) return;
+  if (m.t === 'ping') { try { conn.send({ t: 'pong' }); } catch (e) { } if (!s.online) { s.online = true; hostBroadcast(); } return; }
+  const now = Date.now(); const r = H.rate[id] = (H.rate[id] || []).filter(t => now - t < 2000); r.push(now); if (r.length > 14) return;
+  hostCmd(id, m, conn);
+}
+function hostCmd(id, m, conn) {
+  const s = seatById(id); if (!s) return;
+  const reply = msg => { if (id === H.hostId || !conn) toast(msg, true); else try { conn.send({ t: 'err', msg }); } catch (e) { } };
+  switch (m.t) {
+    case 'act': {
+      const seq = +m.seq || 0;
+      if (id !== H.hostId && conn) { if (seq <= (H.seqs[id] || 0)) return; H.seqs[id] = seq; }
+      const r = hostAction(id, m.a || {}); if (!r.ok) { reply(r.error); hostBroadcast(); } return;
+    }
+    case 'ready': if (!H.game || H.game.phase === 'over') { s.ready = !!m.v; hostBroadcast(); } return;
+    case 'chat': {
+      const text = String(m.text || '').replace(/\s+/g, ' ').trim().slice(0, 160); if (!text) return;
+      const last = H.chat.filter(c => c.id === id).pop(); if (last && Date.now() - last.ts < 600) return;
+      H.chat.push({ id, n: s.name, text, ts: Date.now() }); if (H.chat.length > 60) H.chat.shift(); hostBroadcast(); return;
+    }
+    case 'react': {
+      const e = String(m.e || '').slice(0, 16); if (!QUICK.includes(e)) return;
+      const msg = { t: 'R', from: id, e };
+      Object.values(H.conns).forEach(c => { if (c.open) try { c.send(msg); } catch (x) { } });
+      onReact(msg); return;
+    }
+    case 'voice': s.voice = !!m.on; s.mic = !!m.on && !!m.mic; hostBroadcast(); return;
+    case 'rematch': if (H.game && H.game.phase === 'over') { H.rematch.add(id); hostBroadcast(); } return;
+  }
+}
+
+/* =================== CLIENT networking =================== */
+function createRoom() {
+  const name = getName(); if (!name) return;
+  if (typeof Peer === 'undefined') return fail('Could not load the networking library (PeerJS). Check your internet and reload.');
+  cleanup(); App.screen = 'connecting'; render();
+  const code = genCode(); const peer = new Peer(PREFIX + code, PEER_OPTS); App.peer = peer;
+  peer.on('open', () => {
+    App.mode = 'host'; hostInit('online', code); addSeat({ id: token, name, pid: peer.id });
+    history.replaceState(null, '', '?room=' + code); App.screen = 'lobby'; hostBroadcast();
+  });
+  peer.on('connection', hostOnConn);
+  peer.on('call', c => Voice.onCall(c));
+  peer.on('disconnected', () => { if (App.peer === peer && !peer.destroyed) setTimeout(() => { try { peer.reconnect(); } catch (e) { } }, 1500); });
+  peer.on('error', e => { if (App.peer !== peer) return; if (e.type === 'unavailable-id') return createRoom(); if (!H) fail('Could not create room (' + e.type + ')'); else if (e.type !== 'peer-unavailable') toast('Network: ' + e.type, true); });
+}
+function joinRoom() {
+  const name = getName(); if (!name) return;
+  const code = (($('#code') && $('#code').value) || App.code || '').trim().toUpperCase();
+  const pw = ($('#pw') && $('#pw').value) || App.pw || '';
+  if (code.length < 4) return toast('Enter a room code', true);
+  if (typeof Peer === 'undefined') return fail('Could not load the networking library (PeerJS). Check your internet and reload.');
+  cleanup(); App.code = code; App.pw = pw; App.screen = 'connecting'; render();
+  const peer = new Peer(PEER_OPTS); App.peer = peer;
+  peer.on('call', c => Voice.onCall(c));
+  const to = setTimeout(() => { if (App.peer === peer && App.screen === 'connecting') fail('Could not reach the room. Check the code — the host may have closed it, or your network blocks peer-to-peer.'); }, 20000);
+  peer.on('open', () => {
+    const conn = peer.connect(PREFIX + code, { reliable: true, serialization: 'json' }); App.conn = conn;
+    conn.on('open', () => {
+      clearTimeout(to); App.mode = 'client'; conn.send({ t: 'join', token, name, pw, pid: peer.id });
+      App.lastSeen = Date.now(); history.replaceState(null, '', '?room=' + code);
+      clearInterval(App.pingT);
+      App.pingT = setInterval(() => { if (App.conn !== conn) return; if (conn.open) try { conn.send({ t: 'ping' }); } catch (e) { } if (Date.now() - App.lastSeen > 20000) lost(conn); }, 4000);
+    });
+    conn.on('data', d => { if (App.conn === conn) { App.lastSeen = Date.now(); clientMsg(d); } });
+    conn.on('close', () => lost(conn)); conn.on('error', () => lost(conn));
+  });
+  peer.on('error', e => { if (App.peer !== peer) return; clearTimeout(to); if (e.type === 'peer-unavailable') fail(`Room ${code} not found. It may have ended — ask the host for a new link.`); else if (App.screen === 'connecting') fail('Connection error: ' + e.type); });
+}
+function clientMsg(m) {
+  if (!m || typeof m !== 'object') return;
+  switch (m.t) {
+    case 'L': onLobby(m.L); render(); break;
+    case 'V': onView(m.V); break;
+    case 'R': onReact(m); break;
+    case 'err': if (m.fatal) fail(m.msg); else toast(m.msg, true); break;
+    case 'kicked': cleanup(); goMenu('You were removed from the room.'); break;
+    case 'closed': cleanup(); goMenu('The host closed the room.'); break;
+  }
+}
+function lost(conn) { if (conn && App.conn !== conn) return; if (App.mode !== 'client') return; clearInterval(App.pingT); Voice.stop(true); App.screen = 'lost'; render(); }
+function cleanup() {
+  clearInterval(App.pingT);
+  if (H) { clearInterval(H.tickT); clearTimeout(H.botT); clearTimeout(H.turnT); Object.values(H.catchT).forEach(clearTimeout); }
+  Voice.stop(true);
+  const p = App.peer; App.peer = null; App.conn = null; H = null; App.mode = null;
+  App.L = null; App.V = null; App.handoff = null; App.modal = null; App.lastEv = 0; App.evInit = false; App.known = new Set(); App.lastTop = null;
+  App.chatOpen = false; App.logOpen = false; Chat.reset();
+  if (p) setTimeout(() => { try { p.destroy(); } catch (e) { } }, 400);
+  Snd.music(false);
+}
+function goMenu(status) { history.replaceState(null, '', location.pathname); App.screen = 'menu'; App.status = status || ''; App.code = ''; render(); }
+function fail(msg) { cleanup(); App.screen = App.code ? 'join' : 'menu'; App.status = msg; render(); }
+function leave() {
+  if (App.mode === 'host' && H) Object.values(H.conns).forEach(c => { try { c.send({ t: 'closed' }); } catch (e) { } });
+  cleanup(); goMenu('');
+}
+function getName() {
+  const el = $('#name'); if (el) prefs.name = el.value.trim().slice(0, 14);
+  if (!prefs.name) { toast('Enter your nickname first', true); el && el.focus(); return null; }
+  savePrefs(); return prefs.name;
+}
+
+function send(m) {
+  if (App.mode === 'local' || App.mode === 'host') {
+    let id = token;
+    if (App.mode === 'local') {
+      const V = App.V;
+      if (m.t === 'act' && m.a.t === 'catch') id = localCatcher(m.a.target);
+      else if (V && V.me >= 0) id = H.game.players[V.me].id;
+      else return toast('Not your turn', true);
+    }
+    hostCmd(id, m, null); return;
+  }
+  if (App.conn && App.conn.open) { try { App.conn.send(m); } catch (e) { toast('Not connected', true); } } else toast('Not connected', true);
+}
+function localCatcher(target) {
+  const g = H.game; const V = App.V;
+  if (V && V.me >= 0 && V.me !== target) return g.players[V.me].id;
+  const h = g.players.find((p, i) => !p.bot && !p.out && i !== target); return h ? h.id : g.players[0].id;
+}
+function act(a) {
+  if (['play', 'draw', 'take', 'pass', 'roul'].includes(a.t) && App.V) a.tv = App.V.tv;
+  send({ t: 'act', a, seq: ++App.seq });
+}
+
+/* =================== state intake + effects =================== */
+const AWAY = ['rules', 'settings', 'history'];
+function onLobby(L) {
+  if (App.L && App.L.round !== L.round) { App.lastEv = 0; App.evInit = false; App.known = new Set(); App.lastTop = null; App.modal = null; }
+  App.L = L;
+  App.timerEnd = L.timerLeft ? Date.now() + L.timerLeft : 0;
+  const away = AWAY.includes(App.screen);
+  if (L.inGame || L.gameOver) { if (!away) App.screen = 'game'; }
+  else if (L.mode !== 'local' && !away) { App.screen = 'lobby'; App.V = null; }
+  setTimeout(() => Voice.sync(), 0);
+}
+function onView(V) {
+  const prev = App.V; App.V = V;
+  if (!App.evInit) { App.evInit = true; App.lastEv = V.events.reduce((m, e) => Math.max(m, e.t === 'start' ? 0 : e.seq), 0); }
+  const fresh = V.events.filter(e => e.seq > App.lastEv);
+  if (fresh.length) App.lastEv = fresh[fresh.length - 1].seq;
+  if (!AWAY.includes(App.screen)) App.screen = 'game';
+  if (App.modal && App.modal.tv != null && App.modal.tv !== V.tv) App.modal = null;
+  if (V.phase === 'roulette' && V.pending && V.pending.victim === V.me && !App.handoff) App.modal = { type: 'roulette', tv: V.tv };
+  if (prev && prev.cur !== V.cur && V.cur === V.me && V.me >= 0) Snd.play('turn');
+  render();
+  fresh.forEach(fx);
+}
+function onReact(m) { if (App.muted.has(m.from)) return; showReaction(m.from, m.e); }
+
+const bannerQ = []; let bannerBusy = false;
+function banner(html, cls, ms) {
+  if (!prefs.effects) return;
+  bannerQ.push({ html, cls, ms: ms || 1100 }); if (bannerQ.length > 4) bannerQ.splice(0, bannerQ.length - 4);
+  if (!bannerBusy) nextBanner();
+}
+function nextBanner() {
+  const b = bannerQ.shift(); if (!b) { bannerBusy = false; return; }
+  bannerBusy = true; const el = document.createElement('div'); el.className = 'banner ' + (b.cls || ''); el.innerHTML = b.html; document.body.appendChild(el);
+  setTimeout(() => { el.remove(); nextBanner(); }, prefs.reduced ? Math.min(b.ms, 900) : b.ms);
+}
+function confetti(set) {
+  if (!prefs.effects || prefs.reduced) return;
+  for (let i = 0; i < 46; i++) { const e = document.createElement('div'); e.className = 'spark'; e.textContent = set[rnd(set.length)]; e.style.left = Math.random() * 100 + 'vw'; e.style.fontSize = 16 + rnd(20) + 'px'; e.style.animationDuration = 2.2 + Math.random() * 2 + 's'; e.style.animationDelay = Math.random() * .8 + 's'; document.body.appendChild(e); setTimeout(() => e.remove(), 5200); }
+}
+const pname = i => App.V && App.V.players[i] ? App.V.players[i].name : '?';
+const isMe = i => App.V && App.V.me === i;
+function fx(e) {
+  switch (e.t) {
+    case 'play': Snd.play(e.card.k === 'num' ? 'card' : 'special'); break;
+    case 'draw': Snd.play('draw'); if (e.n > 1) toast(`${isMe(e.p) ? 'You' : pname(e.p)} drew ${e.n} cards`); break;
+    case 'stack': Snd.play('penalty'); banner(`+${e.total}<small>${e.stacked ? `Stacked +${e.val}! ` : ''}${isMe(e.target) ? 'YOU' : esc(pname(e.target))} must stack or take ${e.total}</small>`, '', 1300); break;
+    case 'penalty': Snd.play('draw'); toast(`${isMe(e.p) ? 'You' : pname(e.p)} took +${e.n} — penalty resolved`); break;
+    case 'skip': banner(`⛔ SKIP<small>${isMe(e.p) ? 'You are' : esc(pname(e.p)) + ' is'} skipped</small>`); break;
+    case 'skipAll': banner(`⏭️ SKIP ALL<small>${esc(pname(e.p))} goes again</small>`); break;
+    case 'rev': { const d = $('.dirring'); if (d) { d.classList.remove('flip'); void d.offsetWidth; d.classList.add('flip'); } banner('↩️ REVERSE', '', 900); break; }
+    case 'discAll': if (e.n) banner(`🗑️ DISCARD ALL<small>${esc(pname(e.p))} dumped ${e.n + 1} cards</small>`); break;
+    case 'swap': Snd.play('special'); banner(`🔄 SWAP!<small>${esc(pname(e.a))} ⇄ ${esc(pname(e.b))}</small>`, '', 1300); App.known = new Set(); break;
+    case 'rotate': Snd.play('special'); banner(`🔁 PASS HANDS<small>${e.dir === 1 ? 'clockwise' : 'counter-clockwise'}</small>`, '', 1300); App.known = new Set(); break;
+    case 'roulette': showRoulette(e); break;
+    case 'elim': {
+      Snd.play('elim');
+      const lim = App.V.rules.mercy;
+      banner(isMe(e.p) ? `💀 YOU'RE OUT<small>You reached ${e.count} cards${e.why ? ' ' + esc(e.why) : ''} — the Mercy Rule knocks out anyone at ${lim}+</small>`
+        : `💀 ${esc(pname(e.p))}<small>reached ${e.count} cards — eliminated (Mercy Rule: ${lim}+)</small>`, 'elim', 2400);
+      break;
+    }
+    case 'uno': Snd.play('uno'); banner(`UNO!<small>${esc(pname(e.p))}</small>`, '', 900); break;
+    case 'caught': Snd.play('penalty'); banner(`🚨 CAUGHT!<small>${esc(pname(e.p))} forgot UNO — +${e.n}</small>`); break;
+    case 'reshuffle': toast('🔀 Draw pile reshuffled'); break;
+    case 'win': {
+      const mine = isMe(e.p);
+      Snd.play(App.V.me < 0 || mine ? 'win' : 'lose');
+      confetti(mine ? ['🏆', '🎉', '⭐', '🥳', '🎈'] : ['🎉', '⭐', '💥', '🃏']);
+      recordHistory(e);
+      break;
+    }
+  }
+}
+function showRoulette(e) {
+  Snd.play('roulette');
+  if (!prefs.effects) { toast(`🎰 ${pname(e.p)} flipped ${e.cards.length} cards`); return; }
+  const el = document.createElement('div'); el.className = 'roulette';
+  el.innerHTML = `<div class="box"><div class="wheel"></div><h3 class="fd" style="font-size:20px;margin-top:8px">🎰 ${esc(pname(e.p))} hunts for <span style="color:${CHEX[e.color]}">${E.CNAME[e.color]}</span></h3><div class="flips"></div><div class="fd" id="rcount" style="font-size:20px"></div></div>`;
+  document.body.appendChild(el);
+  const flips = el.querySelector('.flips'); const shown = e.cards.slice(-18); let i = 0;
+  const step = () => {
+    if (!el.isConnected) return;
+    if (i < shown.length) { const c = shown[i]; flips.insertAdjacentHTML('beforeend', cardHTML(c, c.c === e.color ? 'hit' : '')); i++; el.querySelector('#rcount').textContent = `${i + (e.cards.length - shown.length)} card${i > 1 ? 's' : ''}…`; setTimeout(step, prefs.reduced ? 30 : 160); }
+    else { el.querySelector('#rcount').textContent = `${isMe(e.p) ? 'You keep' : esc(pname(e.p)) + ' keeps'} all ${e.cards.length}!`; setTimeout(() => el.remove(), 1400); }
+  };
+  step(); el.onclick = () => el.remove();
+}
+function recordHistory(e) {
+  const V = App.V; if (!V) return;
+  const list = JSON.parse(localStorage.getItem('nm_history') || '[]');
+  list.unshift({ ts: Date.now(), mode: App.mode === 'local' ? 'Local' : 'Online', players: V.players.map(p => p.name + (p.bot ? ' 🤖' : '')), winner: V.players[e.p].name, reason: e.reason, points: e.points, me: V.me >= 0 ? (V.me === e.p ? 'won' : 'lost') : '' });
+  localStorage.setItem('nm_history', JSON.stringify(list.slice(0, 50)));
+}
+
+/* =================== CHAT: persistent widget, updated in place (never re-created) =================== */
+const Chat = {
+  built: false, lastKey: '', lastMutes: '',
+  build() {
+    const root = $('#chatRoot');
+    root.innerHTML = `<div class="fab" id="chatFab"><button class="btn sm c" id="chatToggle" type="button">💬 Chat<span id="chatUnread"></span></button></div>
+    <div class="chat" id="chatBox" role="dialog" aria-label="Chat" hidden><div class="chathead">💬 Room chat<button class="x" id="chatClose" type="button" aria-label="Close chat">×</button></div>
+     <div class="chatlog" id="chatLog" aria-live="polite"></div>
+     <div class="quick">${QUICK.map(q => `<button type="button" data-q="${esc(q)}">${esc(q)}</button>`).join('')}</div>
+     <div class="mutes" id="chatMutes"></div>
+     <form class="chatform" id="chatForm" autocomplete="off"><input id="chatIn" maxlength="160" placeholder="Message…" autocomplete="off" enterkeyhint="send"><button class="btn sm p" type="submit">Send</button></form></div>`;
+    $('#chatToggle').onclick = () => { App.chatOpen = true; this.update(); setTimeout(() => $('#chatIn').focus(), 30); };
+    $('#chatClose').onclick = () => { App.chatOpen = false; this.update(); };
+    root.querySelector('.quick').onclick = e => { const b = e.target.closest('[data-q]'); if (b) send({ t: 'react', e: b.dataset.q }); };
+    $('#chatMutes').onclick = e => {
+      const b = e.target.closest('[data-mid]'); if (!b) return;
+      const id = b.dataset.mid; App.muted.has(id) ? App.muted.delete(id) : App.muted.add(id);
+      this.lastKey = ''; this.lastMutes = ''; this.update();
+    };
+    $('#chatForm').onsubmit = e => { e.preventDefault(); const i = $('#chatIn'); const v = i.value.trim(); if (!v) return; i.value = ''; send({ t: 'chat', text: v }); };
+    this.built = true;
+  },
+  update() {
+    const root = $('#chatRoot');
+    const L = App.L, show = !!L && App.mode && App.mode !== 'local' && ['lobby', 'game'].includes(App.screen);
+    if (!show) { root.hidden = true; return; }
+    if (!this.built) this.build();
+    root.hidden = false;
+    $('#chatFab').hidden = App.chatOpen; $('#chatBox').hidden = !App.chatOpen;
+    const visible = L.chat.filter(c => !App.muted.has(c.id));
+    const lastTs = L.chat.length ? L.chat[L.chat.length - 1].ts : 0;
+    if (App.chatOpen) App.chatSeen = lastTs;
+    const unread = visible.filter(c => c.ts > App.chatSeen && !c.sys && c.id !== token).length;
+    const u = $('#chatUnread'), ut = unread ? String(unread) : '';
+    if (u.textContent !== ut) { u.textContent = ut; u.className = unread ? 'u' : ''; }
+    const key = visible.length + ':' + lastTs;
+    if (key !== this.lastKey) {
+      this.lastKey = key; const log = $('#chatLog');
+      log.innerHTML = visible.map(c => c.sys ? `<div class="m sys">${esc(c.text)}</div>`
+        : `<div class="m"><b style="color:${AVC[(L.seats.find(x => x.id === c.id) || {}).av || 0]};-webkit-text-stroke:.3px #1d1340">${esc(c.n)}</b> ${esc(c.text)}</div>`).join('') || '<div class="m sys">Say hi 👋</div>';
+      log.scrollTop = log.scrollHeight;
+    }
+    const others = L.seats.filter(x => !x.bot && x.id !== token);
+    const mk = others.map(x => x.id + (App.muted.has(x.id) ? 1 : 0) + x.name).join('|');
+    if (mk !== this.lastMutes) {
+      this.lastMutes = mk;
+      $('#chatMutes').innerHTML = 'Hide messages from: ' + (others.map(x => `<button type="button" class="btn xs ${App.muted.has(x.id) ? 'p' : 'w'}" data-mid="${esc(x.id)}">${App.muted.has(x.id) ? '🙈' : '💬'} ${esc(x.name)}</button>`).join(' ') || '—');
+    }
+  },
+  reset() { this.built = false; this.lastKey = ''; this.lastMutes = ''; const r = $('#chatRoot'); if (r) { r.innerHTML = ''; r.hidden = true; } }
+};
+
+function showReaction(from, e) {
+  const layer = $('#reactLayer'); if (!layer) return;
+  const sel = `[data-vid="${CSS.escape(from)}"]`;
+  const target = document.querySelector('.seat' + sel) || document.querySelector('.who' + sel) || document.querySelector('#app .vring' + sel);
+  const L = App.L, s = L && L.seats.find(x => x.id === from);
+  const el = document.createElement('div');
+  const isText = e.length > 3;
+  el.className = 'freact' + (isText ? ' txt' : '');
+  el.innerHTML = isText ? `<b>${esc(s ? s.name : '')}:</b> ${esc(e)}` : `${esc(e)}${s ? `<small>${esc(s.name)}</small>` : ''}`;
+  if (target) { const r = target.getBoundingClientRect(); el.style.left = Math.min(innerWidth - 60, Math.max(60, r.left + r.width / 2)) + 'px'; el.style.top = Math.max(70, r.top) + 'px'; }
+  else { el.style.left = (30 + Math.random() * 40) + 'vw'; el.style.top = '45vh'; }
+  layer.appendChild(el); setTimeout(() => el.remove(), 2600);
+}
+
+/* =================== VIEWS =================== */
+function render() {
+  const a = document.activeElement;
+  const keep = a && a.id && a.tagName === 'INPUT' && a.closest('#app') ? { id: a.id, s: a.selectionStart, e: a.selectionEnd } : null;
+  const vals = {}; document.querySelectorAll('#app input[id]').forEach(i => vals[i.id] = i.value);
+  const scrollHand = $('.hand') ? $('.hand').scrollLeft : 0;
+  $('#app').innerHTML = view();
+  for (const id in vals) { const el = document.getElementById(id); if (el && el.closest('#app') && el.type !== 'checkbox' && el.type !== 'range') el.value = vals[id]; }
+  if (keep) { const el = document.getElementById(keep.id); if (el) { el.focus(); try { el.setSelectionRange(keep.s, keep.e); } catch (e) { } } }
+  if ($('.hand')) $('.hand').scrollLeft = scrollHand;
+  $('#overlay').innerHTML = overlays();
+  Chat.update();
+  Voice.refreshUI();
+}
+function view() {
+  switch (App.screen) {
+    case 'connecting': return `<div class="narrow" style="text-align:center"><div class="fan">${backHTML()}${backHTML()}${backHTML()}</div><h2 class="fd pulse">Connecting…</h2><p class="note">${App.code ? 'Room ' + esc(App.code) : 'Creating your room'}</p><button class="btn w mt2" data-a="menu">Cancel</button></div>`;
+    case 'lost': return `<div class="narrow" style="text-align:center"><h2 class="fd mt2">📡 Connection lost</h2><p class="note">Your cards are safe — the host keeps your seat.</p><button class="btn mt2" data-a="join">Reconnect to ${esc(App.code)}</button><button class="btn w mt" data-a="menu">Main menu</button></div>`;
+    case 'online': return vOnline();
+    case 'join': return vJoin();
+    case 'localsetup': return vLocalSetup();
+    case 'lobby': return vLobby();
+    case 'game': return vGame();
+    case 'rules': return vRules();
+    case 'settings': return vSettings();
+    case 'history': return vHistory();
+    default: return vMenu();
+  }
+}
+const logo = () => `<div class="logo"><span class="l1">${[...'UNO'].map(c => `<span>${c}</span>`).join('')}</span><span class="l2">NO MERCY</span></div>`;
+function vMenu() {
+  const sample = [{ c: 'R', k: 'num', n: 7 }, { c: 'W', k: 'wd10' }, { c: 'B', k: 'skipAll' }, { c: 'W', k: 'roul' }, { c: 'Y', k: 'discAll' }, { c: 'G', k: 'd4' }];
+  return `<div class="narrow">${logo()}
+  <div class="fan">${sample.map((c, i) => cardHTML(c, '', `style="transform:rotate(${(i - 2.5) * 11}deg) translateY(${Math.abs(i - 2.5) * 6}px);animation-delay:${i * .07}s"`)).join('')}</div>
+  <p class="tagline">stack it · swap it · show 'em no mercy</p>
+  ${App.status ? `<div class="err">${esc(App.status)}</div>` : ''}
+  <div class="menu-grid">
+    <button class="btn p" data-a="go" data-s="online"><span class="em">🌐</span>Play Online</button>
+    <button class="btn c" data-a="quickai"><span class="em">🤖</span>Play vs AI</button>
+    <button class="btn g" data-a="go" data-s="localsetup"><span class="em">📱</span>Play Locally</button>
+    <button class="btn o" data-a="go" data-s="rules"><span class="em">📖</span>How to Play</button>
+    <button class="btn w" data-a="go" data-s="settings"><span class="em">⚙️</span>Settings</button>
+    <button class="btn w" data-a="go" data-s="history"><span class="em">🏅</span>Match History</button>
+  </div>
+  <p class="madein">Made with ❤️ in Palakarai, Trichy</p>
+  <p class="note mt" style="text-align:center">Fan-made game. UNO® is a trademark of Mattel — not affiliated or endorsed. Original card art.</p></div>`;
+}
+function vOnline() {
+  return `<div class="narrow"><button class="btn sm w" data-a="menu">← Back</button><h2 class="fd">🌐 Play Online</h2>
+  <div class="card-ui p"><div class="label">Your nickname</div><input id="name" maxlength="14" value="${esc(prefs.name)}" placeholder="e.g. Jaya" autocomplete="off"></div>
+  <button class="btn p" data-a="create">✨ Create private room</button>
+  <div class="card-ui c mt2"><div class="label">Join with a code</div>
+    <div class="row"><input id="code" maxlength="5" placeholder="CODE" style="text-transform:uppercase;letter-spacing:.3em;text-align:center" value="${esc(App.code)}"><input id="pw" placeholder="Password"></div>
+    <button class="btn c mt" data-a="join">Join room</button></div>
+  ${App.status ? `<div class="err">${esc(App.status)}</div>` : ''}
+  <p class="note">Rooms are peer-to-peer: the host's browser runs the game. Keep the host tab open.</p></div>`;
+}
+function vJoin() {
+  return `<div class="narrow">${logo()}<div class="card-ui p mt2"><div class="label">You're invited to room ${esc(App.code)}</div>
+  <input id="name" maxlength="14" value="${esc(prefs.name)}" placeholder="Your nickname" autocomplete="off"><input id="pw" class="mt" placeholder="Room password (if any)">
+  <button class="btn p mt" data-a="join">🃏 Join room ${esc(App.code)}</button></div>
+  ${App.status ? `<div class="err">${esc(App.status)}</div>` : ''}<button class="btn w" data-a="menu">Main menu</button></div>`;
+}
+
+function rulesConfig(rules, timer, editable) {
+  const dis = editable ? '' : 'disabled';
+  const sel = (k, opts, cur) => `<select data-rule="${k}" ${dis}>${opts.map(([v, l]) => `<option value="${v}" ${String(v) === String(cur) ? 'selected' : ''}>${l}</option>`).join('')}</select>`;
+  return `<div class="setrow"><span>Mercy Rule ${rules.mercy !== 25 ? '<span class="hr">HOUSE RULE</span>' : '<span class="off">OFFICIAL</span>'}</span>${sel('mercy', [[25, 'Out at 25 cards'], [20, 'Out at 20'], [30, 'Out at 30'], [40, 'Out at 40'], [0, 'Off']], rules.mercy)}</div>
+  <div class="setrow"><span>Stacking ${!rules.stacking ? '<span class="hr">HOUSE RULE</span>' : '<span class="off">OFFICIAL</span>'}</span>${sel('stacking', [[1, 'Equal or higher'], [0, 'No stacking']], rules.stacking ? 1 : 0)}</div>
+  <div class="setrow"><span>No playable card ${!rules.drawUntilPlayable ? '<span class="hr">HOUSE RULE</span>' : '<span class="off">OFFICIAL</span>'}</span>${sel('drawUntilPlayable', [[1, 'Draw until playable'], [0, 'Draw one card']], rules.drawUntilPlayable ? 1 : 0)}</div>
+  <div class="setrow"><span>Roulette colour ${rules.rouletteChooser !== 'victim' ? '<span class="hr">HOUSE RULE</span>' : '<span class="off">OFFICIAL</span>'}</span>${sel('rouletteChooser', [['victim', 'Next player picks'], ['player', 'Player who plays it']], rules.rouletteChooser)}</div>
+  <div class="setrow"><span>Scoring</span>${sel('targetScore', [[0, 'Single hand'], [1000, 'First to 1000 pts']], rules.targetScore)}</div>
+  <div class="setrow"><span>Turn timer</span>${sel('timer', [[0, 'Off'], [30, '30 seconds'], [60, '60 seconds']], timer)}</div>`;
+}
+function rulesSummary(r) {
+  const li = (t, house) => `<li>${t}${house ? ' <span class="hr">HOUSE</span>' : ''}</li>`;
+  return `<ul class="summary">${li('168-card deck, 7 cards each')}
+  ${li(r.stacking ? 'Stack draw cards of equal or higher value' : 'No stacking — take every penalty', !r.stacking)}
+  ${li(r.drawUntilPlayable ? 'No match? Draw until you can play, then play it' : 'No match? Draw one card', !r.drawUntilPlayable)}
+  ${li(r.mercy ? `💀 Mercy Rule: hold ${r.mercy}+ cards and you're OUT (even mid-penalty)` : 'Mercy Rule off', r.mercy !== 25)}
+  ${li('7 = swap hands · 0 = everyone passes hands')}
+  ${li(r.rouletteChooser === 'victim' ? 'Roulette: next player picks a colour, flips until they hit it' : 'Roulette: the player who plays it picks the colour', r.rouletteChooser !== 'victim')}
+  ${li('Forget UNO and get caught: +2')}
+  ${li(r.targetScore ? 'Points: first to 1000 wins the match' : 'Single hand — first out (or last standing) wins')}</ul>`;
+}
+function setRule(k, v) {
+  const target = H ? H.settings : App.setup;
+  if (k === 'timer') target.timer = +v;
+  else if (k === 'mercy' || k === 'targetScore') target.rules[k] = +v;
+  else if (k === 'stacking' || k === 'drawUntilPlayable') target.rules[k] = v === '1';
+  else if (k === 'rouletteChooser') target.rules[k] = v === 'player' ? 'player' : 'victim';
+  if (H) hostBroadcast(); else render();
+}
+
+function vLocalSetup() {
+  const S = App.setup;
+  if (!S.players.length) S.players = [{ name: prefs.name || 'Player 1', bot: null }, { name: 'Player 2', bot: null }];
+  return `<div class="narrow"><button class="btn sm w" data-a="menu">← Back</button><h2 class="fd">📱 Pass & Play / vs AI</h2>
+  <div class="card-ui p"><div class="label">Players <span>${S.players.length}/6</span></div>
+  <ul class="plist">${S.players.map((p, i) => `<li>${avatar(p.name, i)}
+    ${p.bot ? `<span class="nm">${esc(p.name)} <span class="tag bot">${p.bot} AI</span></span>` : `<input class="nm" data-pname="${i}" value="${esc(p.name)}" maxlength="14" style="padding:8px">`}
+    ${S.players.length > 2 ? `<button class="x" data-a="lrm" data-i="${i}" aria-label="Remove">×</button>` : ''}</li>`).join('')}</ul>
+  <div class="row mt" style="flex-wrap:wrap"><button class="btn sm g" data-a="ladd" ${S.players.length >= 6 ? 'disabled' : ''}>+ Human</button>
+  <select id="lbot" style="padding:6px;flex:1 1 110px"><option value="easy">Easy AI</option><option value="medium" selected>Medium AI</option><option value="hard">Hard AI</option></select>
+  <button class="btn sm c" data-a="laddbot" ${S.players.length >= 6 ? 'disabled' : ''}>+ AI</button></div>
+  <p class="note mt">Hands stay hidden: the screen asks you to pass the device before each human turn.</p></div>
+  <div class="card-ui c"><div class="label">Rules</div>${rulesConfig(S.rules, S.timer, true)}</div>
+  <div class="card-ui y"><div class="label">Summary</div>${rulesSummary(S.rules)}</div>
+  <button class="btn p" data-a="lstart">🃏 Deal the cards</button></div>`;
+}
+
+function vLobby() {
+  const L = App.L; if (!L) return '';
+  const isHost = L.hostId === token, me = L.seats.find(s => s.id === token);
+  const humansReady = L.seats.filter(s => !s.bot).every(s => s.ready);
+  return `<div class="narrow"><div class="topbar"><span class="code">${esc(L.code)}</span><span class="sp"></span>${vslot()}<button class="btn sm c" data-a="copy">Copy link</button>${navigator.share ? '<button class="btn sm w" data-a="share">Share</button>' : ''}<button class="btn sm w" data-a="leave">Leave</button></div>
+  <div class="card-ui p"><div class="label">Invite friends</div><div class="linkbox">${esc(roomLink(L.code))}</div>${L.settings.hasPw ? '<p class="note mt">🔒 Password protected</p>' : ''}</div>
+  <div class="card-ui c"><div class="label">Players <span>${L.seats.length}/6</span></div>
+  <ul class="plist">${L.seats.map(s => `<li><span data-vid="${esc(s.id)}" class="vring">${avatar(s.name, s.av)}</span><span class="nm">${esc(s.name)}${vIcon(s)}${s.id === L.hostId ? '<span class="tag">👑 host</span>' : ''}${s.id === token ? '<span class="tag no">you</span>' : ''}${s.bot ? `<span class="tag bot">${s.bot} AI</span>` : ''}${!s.online ? '<span class="tag no">offline</span>' : ''}</span>
+    ${s.bot ? '' : `<span class="tag ${s.ready ? 'ok' : 'no'}">${s.ready ? 'ready' : 'not ready'}</span>`}
+    ${isHost && s.id !== token ? `<button class="x" data-a="kick" data-id="${esc(s.id)}" aria-label="Remove">×</button>` : ''}</li>`).join('')}</ul>
+  ${isHost ? `<div class="row mt"><select id="obot" style="padding:6px"><option value="easy">Easy AI</option><option value="medium" selected>Medium AI</option><option value="hard">Hard AI</option></select><button class="btn sm c" data-a="addbot" ${L.seats.length >= 6 ? 'disabled' : ''}>+ Add AI</button></div>` : ''}
+  </div>
+  <div class="card-ui y"><div class="label">Rules ${isHost ? '' : '<span>host decides</span>'}</div>${rulesConfig(L.settings.rules, L.settings.timer, isHost)}
+  ${isHost ? `<div class="setrow"><span>Room password</span><input id="pwset" placeholder="none" style="width:150px;padding:8px" value="${esc(H.settings.password)}"></div>` : ''}</div>
+  <div class="card-ui"><div class="label">Rules summary</div>${rulesSummary(L.settings.rules)}</div>
+  ${isHost ? `<button class="btn p" data-a="start" ${L.seats.length < 2 || !humansReady ? 'disabled' : ''}>${L.seats.length < 2 ? 'Need 2+ players (add an AI?)' : !humansReady ? 'Waiting for players to be ready…' : '🃏 Start match'}</button>`
+      : `<button class="btn ${me && me.ready ? 'w' : 'g'}" data-a="ready">${me && me.ready ? '✋ Not ready' : '✅ I\'m ready'}</button><p class="note mt" style="text-align:center">Waiting for the host to start…</p>`}
+  </div>`;
+}
+
+/* ---------- game table ---------- */
+function vGame() {
+  const V = App.V, L = App.L;
+  if (!V || !L) return `<div class="narrow"><h2 class="fd pulse">Shuffling…</h2></div>`;
+  const me = V.me, n = V.players.length;
+  const order = []; if (me >= 0) { for (let k = 1; k < n; k++) order.push((me + k) % n); } else for (let k = 0; k < n; k++) order.push(k);
+  const seatInfo = id => L.seats.find(s => s.id === id) || {};
+  const actor = V.phase === 'roulette' && V.pending ? V.pending.victim : V.cur;
+  const myP = me >= 0 ? V.players[me] : null;
+  const top = V.top;
+  const topCls = App.lastTop !== top.id ? 'land' : ''; App.lastTop = top.id;
+  const hand = sortHand(V.hand);
+  const newIds = App.known.size ? hand.filter(c => !App.known.has(c.id)).map(c => c.id) : [];
+  App.known = new Set(hand.map(c => c.id));
+  const myTurn = me >= 0 && V.cur === me && V.phase === 'play';
+  const mercy = V.rules.mercy;
+  const tleft = App.timerEnd ? Math.max(0, Math.ceil((App.timerEnd - Date.now()) / 1000)) : 0;
+
+  let status;
+  if (V.phase === 'over') status = `🏆 ${esc(V.players[V.winner].name)} wins!`;
+  else if (V.phase === 'roulette') status = actor === me ? '🎰 Pick a colour for the roulette!' : `🎰 ${esc(V.players[actor].name)} is picking a roulette colour…`;
+  else if (myTurn) status = V.stack ? (V.legal.length ? `Stack a +${V.stack.last} or higher — or take ${V.stack.total}` : `No card can stack on +${V.stack.last} — you must take ${V.stack.total}`) : V.mustPlay != null ? (V.canPass ? 'Play the drawn card or keep it' : 'Play the card you drew') : V.canDraw ? 'No match — draw until you can play' : 'Your turn — tap a highlighted card';
+  else status = `${esc(V.players[V.cur].name)}'s turn${V.stack ? ` · facing +${V.stack.total}` : ''}`;
+
+  // Mercy Rule warning before you take a penalty
+  let warn = '';
+  if (myTurn && V.stack && mercy && myP) {
+    const after = myP.count + V.stack.total;
+    if (after >= mercy) warn = `<div class="mercywarn">💀 Taking +${V.stack.total} puts you at <b>${after}</b> cards — the Mercy Rule knocks you out at ${mercy}! ${V.legal.length ? 'Stack a draw card to pass it on 👇' : 'No card can save you this time 😬'}</div>`;
+    else if (after >= mercy - 5) warn = `<div class="mercywarn safe">⚠️ Taking +${V.stack.total} → ${after} cards (out at ${mercy})</div>`;
+  } else if (myP && mercy && !myP.out && myP.count >= mercy - 5 && V.phase !== 'over') {
+    warn = `<div class="mercywarn safe">⚠️ ${myP.count} cards — you're out at ${mercy}</div>`;
+  }
+
+  const seatHTML = i => {
+    const p = V.players[i], si = seatInfo(p.id);
+    const danger = mercy && p.count >= mercy - 5 && !p.out;
+    const canCatch = p.vuln && !p.out && i !== me && (me < 0 ? App.mode === 'local' : !V.players[me].out);
+    return `<div data-vid="${esc(p.id)}" class="seat ${i === actor && V.phase !== 'over' ? 'cur' : ''} ${p.out ? 'out' : ''}" aria-label="${esc(p.name)}, ${p.count} cards${p.out ? ', eliminated' : ''}">
+      ${avatar(p.name, si.av ?? i)}<div class="info"><div class="nm">${esc(p.name)}${p.bot ? ' 🤖' : ''}${vIcon(si)}${si.online === false && !p.bot ? ' 📡' : ''}</div>
+      <div class="ct ${danger ? 'danger' : ''}"><span class="backs">${Array.from({ length: Math.min(p.count, 6) }, () => backHTML('mini')).join('')}</span>${p.out ? '💀 out' : `${p.count}${mercy ? `<span style="opacity:.6">/${mercy}</span>` : ''}<span class="cw"> card${p.count === 1 ? '' : 's'}</span>${danger ? ' ⚠️' : ''}`}</div></div>
+      ${p.out ? '<span class="badge dead">OUT</span>' : p.uno ? '<span class="badge uno">UNO!</span>' : ''}
+      ${canCatch ? `<button class="btn xs catchbtn" data-a="catch" data-i="${i}">🚨 Catch!</button>` : ''}</div>`;
+  };
+
+  const side = App.logOpen;
+  const ov = hand.length <= 4 ? -0.05 : hand.length <= 7 ? -0.25 : hand.length <= 12 ? -0.42 : -0.55;
+  return `<div class="topbar"><span class="code">${App.mode === 'local' ? '📱 LOCAL' : esc(L.code)}</span><span class="note">Round ${L.round}</span>
+    ${V.rules.targetScore ? `<span class="note">· to ${V.rules.targetScore} pts</span>` : ''}<span class="sp"></span>${vslot()}
+    <button class="btn sm w" data-a="log" aria-pressed="${side}" aria-label="Game log">📜</button><button class="btn sm w" data-a="go" data-s="rules" data-back="1" aria-label="Rules">📖</button><button class="btn sm w" data-a="opensettings" aria-label="Settings">⚙️</button><button class="btn sm w" data-a="leave" aria-label="Leave">🚪</button></div>
+  <div class="layout ${side ? 'side' : ''}"><div style="min-width:0">
+  <div class="board">
+    <div class="seats">${order.map(seatHTML).join('')}</div>
+    <div class="center">
+      <div class="dirring ${V.dir < 0 ? 'ccw' : ''}"><div class="arr"></div></div>
+      <div class="pile"><button class="drawpile ${V.canDraw ? 'can' : ''}" data-a="${V.canDraw ? 'draw' : ''}" aria-label="Draw pile, ${V.drawCount} cards${V.canDraw ? ' — draw' : ''}">${backHTML()}${backHTML()}${backHTML()}</button><span class="lbl">${V.drawCount} left</span></div>
+      <div class="pile"><div class="discard" data-drop="1" style="--cur:${CHEX[V.color] || '#fff'}">
+        ${V.discardCount > 2 ? '<div class="card ghost2"></div>' : ''}${V.discardCount > 1 ? '<div class="card ghost"></div>' : ''}
+        ${cardHTML(top, 'top ' + topCls)}<div class="colorring" style="--cur:${CHEX[V.color]}"></div>
+        ${V.stack ? `<div class="stackbadge" aria-live="polite">+${V.stack.total}</div>` : ''}</div>
+        <span class="colorchip" style="--cur:${CHEX[V.color]}"><i></i>${E.CNAME[V.color]} ${PAT[V.color]}</span></div>
+    </div>
+    <div class="status" aria-live="polite">${status}${tleft && V.phase !== 'over' ? `<span class="timer ${tleft <= 5 ? 'low' : ''}" id="tmr">${tleft}s</span>` : ''}</div>
+    ${warn}
+    ${myP ? `<div class="me"><div data-vid="${esc(App.mode === 'local' ? myP.id : token)}" class="who ${myTurn || (V.phase === 'roulette' && actor === me) ? 'cur' : ''}">${avatar(myP.name, (seatInfo(myP.id).av) ?? me, 30)}${esc(myP.name)} · ${myP.out ? '💀 out' : `${myP.count}${mercy ? `/${mercy}` : ''}`}${myP.uno ? ' · <span style="color:var(--pink)">UNO!</span>' : ''}</div>
+      <div class="actions">
+        ${V.canTake ? `<button class="btn sm p" data-a="take">Take +${V.stack.total}${mercy && myP.count + V.stack.total >= mercy ? ' 💀' : ''}</button>` : ''}
+        ${V.canDraw ? `<button class="btn sm" data-a="draw">Draw 🂠</button>` : ''}
+        ${V.canPass ? `<button class="btn sm w" data-a="pass">Keep & pass</button>` : ''}
+        ${(V.canPreUno || (myP.vuln && myP.count === 1)) ? `<button class="btn sm unobtn" data-a="uno">UNO!</button>` : ''}
+        ${V.preCalled ? '<span class="tag ok">UNO called ✓</span>' : ''}
+      </div></div>` : `<div class="status" style="opacity:.85">${App.mode === 'local' && V.phase !== 'over' ? '🙈 Hands hidden' : 'Spectating — you’ll be dealt in next round'}</div>`}
+    ${me >= 0 ? `<div class="hand ${hand.length ? '' : 'empty'}" style="--ov:${ov}" role="list" aria-label="Your hand">${hand.length ? hand.map(c => {
+      const legal = V.legal.includes(c.id);
+      return `<button class="card c-${c.c} k-${c.k} ${legal ? 'legal' : (myTurn ? 'dim' : '')} ${newIds.includes(c.id) ? 'new' : ''}" role="listitem" data-a="${legal ? 'card' : 'nope'}" data-id="${c.id}" ${legal ? 'draggable="true"' : ''} aria-label="${esc(E.cardName(c))}${legal ? ', playable' : ''}">${cardInner(c)}</button>`;
+    }).join('') : (myP && myP.out ? 'You were eliminated — watch the carnage 🍿' : '')}</div>` : ''}
+  </div>
+  ${V.phase === 'over' ? vResults() : ''}
+  </div>${side ? `<div class="card-ui sidepanel"><div class="label">Game log <button class="x" data-a="log">×</button></div><div class="loglist">${V.log.slice().reverse().map(l => `<div>${esc(l)}</div>`).join('')}</div></div>` : ''}</div>`;
+}
+function vResults() {
+  const V = App.V, L = App.L, R = L.lastResult; if (!R) return '';
+  const isHost = App.mode !== 'client';
+  const rows = L.seats.filter(s => L.gameIds.includes(s.id)).map(s => ({ s, pts: L.scores[s.id] || 0, w: L.wins[s.id] || 0 })).sort((a, b) => b.pts - a.pts || b.w - a.w);
+  const voted = L.rematch.includes(token);
+  return `<div class="card-ui p mt2 results"><div class="big">${V.me === V.winner ? '🏆 YOU WIN!' : `🏆 ${esc(R.winner)} wins`}</div>
+   <p style="text-align:center;font-weight:900" class="mt">${R.reason === 'last' ? 'Last player standing — everyone else got shown no mercy 💀' : 'Played their final card!'} · +${R.points} pts</p>
+   ${V.rules.targetScore ? `<p class="note" style="text-align:center">${R.matchOver ? `🎉 Match over — ${esc(R.winner)} reached ${V.rules.targetScore}!` : `Playing to ${V.rules.targetScore} points`}</p>` : ''}
+   <ul class="plist mt">${rows.map(r => `<li>${avatar(r.s.name, r.s.av)}<span class="nm">${esc(r.s.name)}${L.rematch.includes(r.s.id) ? '<span class="tag ok">rematch ✓</span>' : ''}</span><span class="note">${r.w} win${r.w === 1 ? '' : 's'}</span><span class="score">${r.pts}</span></li>`).join('')}</ul>
+   <div class="row mt">${isHost ? `<button class="btn p" data-a="start">🔁 ${R.matchOver || !V.rules.targetScore ? 'Rematch' : 'Next hand'}</button><button class="btn w" data-a="tolobby">${App.mode === 'local' ? 'Setup' : 'Lobby'}</button>`
+      : `<button class="btn ${voted ? 'w' : 'g'}" data-a="rematch" ${voted ? 'disabled' : ''}>${voted ? 'Voted ✓ waiting for host' : '🔁 Vote rematch'}</button>`}</div></div>`;
+}
+
+function overlays() {
+  if (App.handoff != null && H && H.game) {
+    const p = H.game.players[App.handoff];
+    return `<div class="handoff" role="dialog" aria-label="Pass device"><div class="box"><div style="font-size:54px">🙈</div><div class="note">Pass the device to</div><div class="big">${esc(p.name)}</div>
+      <p class="note">Everyone else, look away!</p><button class="btn p mt2" data-a="reveal">I'm ${esc(p.name)} — show my cards</button></div></div>`;
+  }
+  const M = App.modal, V = App.V;
+  if (!M) return '';
+  if ((M.type === 'color' || M.type === 'roulette') && V) {
+    return `<div class="modal-bg peek"><div class="modal" role="dialog" aria-label="Choose a colour"><h3>${M.type === 'roulette' ? '🎰 Roulette! Pick a colour' : '🎨 Choose a colour'}</h3>
+     ${M.type === 'roulette' ? '<p class="note" style="text-align:center;margin-bottom:12px">You will flip cards until you hit this colour — and keep them all.</p>' : ''}
+     <div class="colors">${E.COLORS.map(c => `<button class="${c}" data-a="pickcolor" data-c="${c}">${PAT[c]} ${E.CNAME[c]}</button>`).join('')}</div>
+     ${M.type === 'color' ? '<button class="btn w mt" data-a="cancel">Cancel</button>' : ''}
+     <div class="peeknote">👇 Your cards are still visible below</div></div></div>`;
+  }
+  if (M.type === 'target' && V) {
+    const opts = V.players.map((p, i) => ({ p, i })).filter(o => o.i !== V.me && !o.p.out);
+    return `<div class="modal-bg"><div class="modal" role="dialog"><h3>🔄 Swap hands with…</h3><ul class="plist">${opts.map(o => `<li>${avatar(o.p.name, o.i)}<span class="nm">${esc(o.p.name)}</span><span class="tag">${o.p.count} cards</span><button class="btn sm p" data-a="picktarget" data-i="${o.i}">Swap</button></li>`).join('')}</ul><button class="btn w mt" data-a="cancel">Cancel</button></div></div>`;
+  }
+  if (M.type === 'settings') return `<div class="modal-bg"><div class="modal">${settingsBody()}<button class="btn mt" data-a="cancel">Done</button></div></div>`;
+  return '';
+}
+
+function settingsBody() {
+  return `<h3>⚙️ Settings</h3>
+  <div class="setrow"><label for="s-sound">Sound effects</label><input type="checkbox" id="s-sound" data-pref="sound" ${prefs.sound ? 'checked' : ''}></div>
+  <div class="setrow"><label for="s-sfx">Effects volume</label><input type="range" id="s-sfx" min="0" max="1" step="0.05" value="${prefs.sfx}" data-pref="sfx" style="width:150px"></div>
+  <div class="setrow"><label for="s-music">Music volume</label><input type="range" id="s-music" min="0" max="1" step="0.05" value="${prefs.music}" data-pref="music" style="width:150px"></div>
+  <div class="setrow"><label for="s-fx">Banners & confetti</label><input type="checkbox" id="s-fx" data-pref="effects" ${prefs.effects ? 'checked' : ''}></div>
+  <div class="setrow"><label for="s-rm">Reduce motion</label><input type="checkbox" id="s-rm" data-pref="reduced" ${prefs.reduced ? 'checked' : ''}></div>
+  <p class="note mt">Audio starts off until you enable it. Keyboard: D = draw / take · U = UNO · Tab + Enter to play cards.</p>`;
+}
+function vSettings() { return `<div class="narrow"><button class="btn sm w" data-a="menu">← Back</button><div class="card-ui mt">${settingsBody()}</div></div>`; }
+function vHistory() {
+  const list = JSON.parse(localStorage.getItem('nm_history') || '[]');
+  return `<div class="narrow"><button class="btn sm w" data-a="menu">← Back</button><h2 class="fd">🏅 Match History</h2>
+  ${list.length ? list.map(h => `<div class="card-ui ${h.me === 'won' ? 'y' : ''}"><div class="label">${new Date(h.ts).toLocaleString()} · ${h.mode}${h.me ? ` · <span style="color:${h.me === 'won' ? 'var(--G)' : 'var(--R)'}">you ${h.me}</span>` : ''}</div>
+   <b>🏆 ${esc(h.winner)}</b> — ${h.reason === 'last' ? 'last standing' : 'emptied hand'} · +${h.points} pts<div class="note mt">${h.players.map(esc).join(' · ')}</div></div>`).join('') + '<button class="btn w" data-a="clearhist">Clear history</button>' : '<div class="card-ui">No matches yet — go deal some pain 😈</div>'}</div>`;
+}
+function vRules() {
+  const ex = c => cardHTML(c, '', 'style="--cw:46px;display:inline-block;vertical-align:middle;margin-right:8px"');
+  return `<div class="narrow"><button class="btn sm w" data-a="${App.rulesBack ? 'back' : 'menu'}">← Back</button><div class="card-ui mt rules"><h2 class="fd">📖 How to play No Mercy</h2>
+  <p><b>Goal:</b> get rid of all your cards — or be the last player standing after everyone else is knocked out by the Mercy Rule.</p>
+  <h3>Your turn</h3><ul><li>Match the top card by <b>colour, number or symbol</b>. Wild cards go on anything.</li><li>No match? <b>Draw until you get a playable card, then play it.</b></li><li>Down to one card? Hit <b>UNO!</b> (you can call it before you play your second-to-last card). If someone catches you before the next player starts, you draw 2.</li></ul>
+  <h3>Stacking</h3><p>When a draw card hits you, you may stack any draw card of <b>equal or higher value</b> (colour doesn't matter). The penalty grows and moves on. Can't (or won't) stack? Take the whole pile and lose your turn.</p>
+  <table><tr><th>On top</th><th>You may stack</th></tr><tr><td>+2</td><td>+2, +4, Wild Reverse +4, +6, +10</td></tr><tr><td>+4 / Wild Reverse +4</td><td>+4, Wild Reverse +4, +6, +10</td></tr><tr><td>+6</td><td>+6, +10</td></tr><tr><td>+10</td><td>+10</td></tr></table>
+  <h3>Mercy Rule 💀</h3><p>The moment you hold <b>25 or more cards</b> you're out — even halfway through taking a penalty. Example: you hold 4 cards and take a +22 stack → you hit 25 → eliminated. The game warns you before you take it. Your cards are set aside and shuffled back in at the next reshuffle. (Hosts can change or switch off the limit as a house rule.)</p>
+  <h3>The cards</h3>
+  <p>${ex({ c: 'R', k: 'num', n: 7 })}<b>7 — Swap:</b> swap hands with a player of your choice.</p>
+  <p>${ex({ c: 'B', k: 'num', n: 0 })}<b>0 — Pass:</b> everyone passes their hand to the next player in the direction of play.</p>
+  <p>${ex({ c: 'G', k: 'skip' })}<b>Skip:</b> next player loses their turn.</p>
+  <p>${ex({ c: 'Y', k: 'rev' })}<b>Reverse:</b> direction flips (with 2 players it works like Skip).</p>
+  <p>${ex({ c: 'R', k: 'skipAll' })}<b>Skip Everyone:</b> everyone is skipped — you play again.</p>
+  <p>${ex({ c: 'B', k: 'discAll' })}<b>Discard All:</b> also discard every card of that colour in your hand.</p>
+  <p>${ex({ c: 'G', k: 'd2' })}${ex({ c: 'Y', k: 'd4' })}<b>Draw 2 / Draw 4:</b> next player draws and loses their turn (stackable).</p>
+  <p>${ex({ c: 'W', k: 'wrd4' })}<b>Wild Reverse Draw 4:</b> reverse direction, then the new next player draws 4. You choose the colour.</p>
+  <p>${ex({ c: 'W', k: 'wd6' })}${ex({ c: 'W', k: 'wd10' })}<b>Wild Draw 6 / 10:</b> next player draws 6 / 10 and loses their turn. You choose the colour.</p>
+  <p>${ex({ c: 'W', k: 'roul' })}<b>Wild Color Roulette:</b> the next player picks a colour, then flips cards until they reveal it — and keeps them all. They lose their turn.</p>
+  <h3>Voice chat 🎧</h3><p>Tap <b>🎧 Join voice</b> to listen — no microphone needed. Only you decide when to talk: tap <b>🔇 Off / 🎙️ On</b>, or open <b>👥</b> and hold <b>✋ Hold to talk</b>. In 👥 you can also mute or turn down any player just for yourself.</p>
+  <h3>Scoring (optional)</h3><p>Winner scores opponents' cards: numbers = face value, colour actions = 20, wilds = 50, plus 250 per player knocked out. First to 1000 wins.</p></div></div>`;
+}
+
+/* =================== interactions =================== */
+function onCard(id) {
+  const V = App.V; if (!V) return;
+  const c = V.hand.find(x => x.id === id); if (!c || !V.legal.includes(id)) return;
+  const needColor = c.c === 'W' && !(c.k === 'roul' && V.rules.rouletteChooser === 'victim');
+  const willHave = V.hand.length - 1 - (c.k === 'discAll' ? V.hand.filter(x => x.id !== id && x.c === c.c).length : 0);
+  const needTarget = c.k === 'num' && c.n === 7 && willHave > 0;
+  App.modal = { type: null, tv: V.tv, card: id, color: null, target: null, needColor, needTarget };
+  advanceChoice();
+}
+function advanceChoice() {
+  const M = App.modal;
+  if (M.needColor && !M.color) { M.type = 'color'; return render(); }
+  if (M.needTarget && M.target == null) { M.type = 'target'; return render(); }
+  const a = { t: 'play', id: M.card }; if (M.color) a.color = M.color; if (M.target != null) a.target = M.target;
+  App.modal = null; render(); act(a);
+}
+const actions = {
+  go: el => { App.status = ''; App.rulesBack = !!el.dataset.back; App.prevScreen = App.screen; App.screen = el.dataset.s; render(); },
+  back: () => { App.screen = App.prevScreen || 'game'; App.rulesBack = false; render(); },
+  menu: () => {
+    if (App.mode) { if (!confirm('Leave the current game?')) return; leave(); return; }
+    if (App.peer) cleanup();
+    App.status = ''; history.replaceState(null, '', location.pathname); App.code = ''; App.screen = 'menu'; render();
+  },
+  create: createRoom, join: joinRoom,
+  leave: () => { if (confirm(App.mode === 'host' ? 'Leave and close the room for everyone?' : 'Leave this game?')) leave(); },
+  copy: () => { const link = roomLink(App.L.code); (navigator.clipboard ? navigator.clipboard.writeText(link) : Promise.reject()).then(() => toast('🔗 Link copied — send it to your friends')).catch(() => prompt('Copy this link:', link)); },
+  share: () => navigator.share({ title: 'UNO No Mercy', text: 'Join my No Mercy room! 😈🃏', url: roomLink(App.L.code) }).catch(() => { }),
+  quickai: () => { App.setup = { players: [{ name: prefs.name || 'You', bot: null }, { name: 'Chip', bot: 'medium' }, { name: 'Robo Raja', bot: 'medium' }, { name: 'Nova', bot: 'hard' }], rules: Object.assign({}, E.OFFICIAL_RULES), timer: 0 }; App.screen = 'localsetup'; render(); },
+  ladd: () => { App.setup.players.push({ name: 'Player ' + (App.setup.players.length + 1), bot: null }); render(); },
+  laddbot: () => { const lvl = $('#lbot').value; const used = App.setup.players.map(p => p.name); App.setup.players.push({ name: BOT_NAMES.find(b => !used.includes(b)) || 'Bot', bot: lvl }); render(); },
+  lrm: el => { App.setup.players.splice(+el.dataset.i, 1); render(); },
+  lstart: () => {
+    document.querySelectorAll('[data-pname]').forEach(i => { App.setup.players[+i.dataset.pname].name = i.value.trim().slice(0, 14) || 'Player ' + (+i.dataset.pname + 1); });
+    const S = App.setup; if (S.players.length < 2) return toast('Need 2+ players', true);
+    if (S.players[0] && !S.players[0].bot) { prefs.name = S.players[0].name; savePrefs(); }
+    cleanup(); App.mode = 'local'; hostInit('local', 'LOCAL');
+    H.settings.rules = Object.assign({}, S.rules); H.settings.timer = S.timer;
+    S.players.forEach((p, i) => addSeat({ id: 'L' + i + '_' + Date.now().toString(36), name: p.name, bot: p.bot }));
+    Snd.init(); Snd.music(true); hostStart();
+  },
+  addbot: () => { const lvl = $('#obot').value; const used = H.seats.map(s => s.name); addSeat({ id: 'bot' + Date.now().toString(36) + rnd(999), name: BOT_NAMES.find(b => !used.includes(b)) || 'Bot', bot: lvl }); hostBroadcast(); },
+  kick: el => {
+    const s = seatById(el.dataset.id); if (!s || !confirm('Remove ' + s.name + '?')) return;
+    if (H.game && H.game.phase !== 'over' && gameIdx(s.id) >= 0) return toast('Can’t remove a player mid-hand — they’ll be auto-played if offline', true);
+    H.seats = H.seats.filter(x => x !== s); const c = H.conns[s.id];
+    if (c) { try { c.send({ t: 'kicked' }); } catch (e) { } setTimeout(() => { try { c.close(); } catch (e) { } }, 300); delete H.conns[s.id]; }
+    sysChat(`${s.name} was removed`); hostBroadcast();
+  },
+  ready: () => { const me = App.L.seats.find(s => s.id === token); send({ t: 'ready', v: !(me && me.ready) }); },
+  start: () => { Snd.init(); Snd.music(true); hostStart(); },
+  tolobby: () => {
+    if (App.mode === 'local') { const r = H.settings.rules, t = H.settings.timer; leave(); App.setup.rules = r; App.setup.timer = t; App.screen = 'localsetup'; render(); return; }
+    H.game = null; H.lastResult = null; H.seats.forEach(s => { if (!s.bot && s.id !== H.hostId) s.ready = false; }); App.screen = 'lobby'; App.V = null; hostBroadcast();
+  },
+  rematch: () => send({ t: 'rematch' }),
+  card: el => onCard(+el.dataset.id),
+  nope: () => { const V = App.V; if (!V) return; if (V.me >= 0 && V.cur === V.me && V.phase === 'play') toast(V.stack ? `Only +${V.stack.last} or higher can stack` : V.mustPlay != null ? 'Play the card you drew' : 'That card doesn’t match', true); },
+  pickcolor: el => { const M = App.modal; if (!M) return; if (M.type === 'roulette') { App.modal = null; render(); act({ t: 'roul', color: el.dataset.c }); return; } M.color = el.dataset.c; advanceChoice(); },
+  picktarget: el => { App.modal.target = +el.dataset.i; advanceChoice(); },
+  cancel: () => { App.modal = null; render(); },
+  draw: () => act({ t: 'draw' }), take: () => act({ t: 'take' }), pass: () => act({ t: 'pass' }),
+  uno: () => act({ t: 'uno' }),
+  catch: el => act({ t: 'catch', target: +el.dataset.i }),
+  reveal: () => { App.localViewer = App.handoff; App.handoff = null; hostBroadcast(); },
+  log: () => { App.logOpen = !App.logOpen; render(); },
+  opensettings: () => { App.modal = { type: 'settings' }; render(); },
+  clearhist: () => { if (confirm('Clear match history?')) { localStorage.removeItem('nm_history'); render(); } }
+};
+
+/* voice controls (outside #app re-render) */
+const vActions = {
+  join: () => Voice.start(),
+  mic: () => Voice.toggleMic(),
+  panel: () => { Voice.panelOpen = !Voice.panelOpen; Voice.renderPanel(true); },
+  close: () => { Voice.panelOpen = false; Voice.renderPanel(); },
+  leave: () => Voice.stop()
+};
+document.addEventListener('click', e => {
+  Object.values(Voice.audios).forEach(a => { if (a.paused) { const p = a.play(); if (p && p.catch) p.catch(() => { }); } });
+  const v = e.target.closest('[data-v]'); if (v && v.dataset.v !== 'ptt') { vActions[v.dataset.v] && vActions[v.dataset.v](); return; }
+  const vm = e.target.closest('[data-vmute]');
+  if (vm) { const id = vm.dataset.vmute; Voice.vmuted.has(id) ? Voice.vmuted.delete(id) : Voice.vmuted.add(id); Voice.applyAudio(id); Voice.renderPanel(true); return; }
+  const el = e.target.closest('#app [data-a], #overlay [data-a]');
+  if (el && !el.disabled && actions[el.dataset.a]) { Snd.init(); actions[el.dataset.a](el); }
+});
+// hold-to-talk (pointer + keyboard space on the button)
+document.addEventListener('pointerdown', e => { const b = e.target.closest('[data-v="ptt"]'); if (!b || Voice.micOn) return; e.preventDefault(); Voice.ptt = true; Voice.setMic(true); });
+const pttUp = () => { if (Voice.ptt) { Voice.ptt = false; Voice.setMic(false); } };
+document.addEventListener('pointerup', pttUp); document.addEventListener('pointercancel', pttUp);
+document.addEventListener('input', e => {
+  if (e.target.id === 'code') e.target.value = e.target.value.toUpperCase();
+  if (e.target.dataset && e.target.dataset.vvol) { const id = e.target.dataset.vvol; Voice.vol[id] = +e.target.value; Voice.applyAudio(id); }
+});
+document.addEventListener('change', e => {
+  const t = e.target;
+  if (t.dataset.rule) setRule(t.dataset.rule, t.value);
+  if (t.dataset.pref) { const k = t.dataset.pref; prefs[k] = t.type === 'checkbox' ? t.checked : +t.value; savePrefs(); applyMotion(); if (k === 'sound' && prefs.sound) { Snd.init(); Snd.play('uno'); } if (k === 'sound' || k === 'music') Snd.music(!!App.mode); render(); }
+  if (t.id === 'pwset' && H) { H.settings.password = t.value.trim().slice(0, 24); hostBroadcast(); }
+  if (t.dataset.pname != null) App.setup.players[+t.dataset.pname].name = t.value.trim().slice(0, 14) || App.setup.players[+t.dataset.pname].name;
+});
+document.addEventListener('keydown', e => {
+  if (e.target.closest && e.target.closest('#chatRoot, #vpanel')) return;
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') {
+    if (e.key === 'Enter' && e.target.id === 'name') { if (App.screen === 'join') joinRoom(); else if (App.screen === 'online') createRoom(); }
+    if (e.key === 'Enter' && (e.target.id === 'code' || e.target.id === 'pw')) joinRoom();
+    return;
+  }
+  const V = App.V; if (App.screen !== 'game' || !V) return;
+  if (e.key === 'Escape' && App.modal && App.modal.type !== 'roulette') { App.modal = null; render(); }
+  if (e.key === 'd' || e.key === 'D') { if (V.canTake) act({ t: 'take' }); else if (V.canDraw) act({ t: 'draw' }); }
+  if (e.key === 'u' || e.key === 'U') act({ t: 'uno' });
+});
+document.addEventListener('dragstart', e => { const c = e.target.closest && e.target.closest('.card.legal'); if (c) { e.dataTransfer.setData('text/plain', c.dataset.id); const d = $('.discard'); if (d) d.classList.add('drop'); } });
+document.addEventListener('dragend', () => { const d = $('.discard'); if (d) d.classList.remove('drop'); });
+document.addEventListener('dragover', e => { if (e.target.closest && e.target.closest('[data-drop]')) e.preventDefault(); });
+document.addEventListener('drop', e => { if (e.target.closest && e.target.closest('[data-drop]')) { e.preventDefault(); const id = +e.dataTransfer.getData('text/plain'); if (!isNaN(id)) onCard(id); } });
+window.addEventListener('beforeunload', e => { if (App.mode === 'host' && H && H.seats.some(s => !s.bot && s.id !== token)) { e.preventDefault(); e.returnValue = ''; } });
+setInterval(() => { const t = $('#tmr'); if (t && App.timerEnd) { const s = Math.max(0, Math.ceil((App.timerEnd - Date.now()) / 1000)); t.textContent = s + 's'; t.classList.toggle('low', s <= 5); } }, 250);
+
+applyMotion();
+render();
+
+</script>
+</body>
+</html>
